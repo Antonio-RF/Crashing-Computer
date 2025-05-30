@@ -1,4 +1,4 @@
-//Compilação: gcc main.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 --libs --cflags)
+//Compilação: gcc main.c cria_mundo.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 --libs --cflags)
 
 #include <allegro5/allegro5.h>														//Biblioteca base do Allegro
 #include <allegro5/allegro_font.h>													//Biblioteca de fontes do Allegro
@@ -6,6 +6,8 @@
 #include <allegro5/allegro_ttf.h> //Biblioteca para usar fontes legais.
 #include <allegro5/events.h>
 #include <allegro5/keycodes.h>
+
+#include "cria_mundo.h"
 
 
 int main(){
@@ -32,6 +34,8 @@ int main(){
 	ALLEGRO_BITMAP* background = al_load_bitmap("Pictures/back.png"); 
 	//Carregando a fonte que eu desejo e salvando como "font":
 	ALLEGRO_FONT* font = al_load_ttf_font("Pictures/minha_fonte.ttf", 110, 0);
+	ALLEGRO_FONT* font2 = al_load_ttf_font("Pictures/minha_fonte2.otf", 200, 0);
+	ALLEGRO_FONT* font3 = al_load_ttf_font("Pictures/minha_fonte3.ttf", 80, 0);
 
 
 	//criando struct que guarda as opções de menu:
@@ -54,6 +58,7 @@ int main(){
 		//evento de tecla pressionada
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (event.keyboard.keycode) {
+				//SETA PARA CIMA ↑
 				case ALLEGRO_KEY_UP:
 					if (estado_atual.MENU == 1 && estado_atual.START == 0 && estado_atual.SAIR == 0) {
 						estado_atual.MENU = 0;
@@ -68,6 +73,7 @@ int main(){
 						estado_atual.MENU = 1;
 					}
 					break;
+				//SETA PARA BAIXO ↓
 				case ALLEGRO_KEY_DOWN:
 					if (estado_atual.MENU == 1 && estado_atual.START == 0 && estado_atual.SAIR == 0) {
 						estado_atual.MENU = 0;
@@ -82,40 +88,57 @@ int main(){
 						estado_atual.SAIR = 1;
 					}
 					break;
+				//ENTER:
+				case ALLEGRO_KEY_ENTER:
+					//se apertou sair, sai!
+					if (estado_atual.SAIR == 1)
+						return 0;
+					//se aperto start, starta o mundo:
+					if (estado_atual.START == 1)
+						cria_mundo(disp);
+					break;
 			}
 		}
 
-
-		//O evento tipo 30 indica um evento de relógio, ou seja, verificação se a tela deve ser atualizada (conceito de FPS)
-		if (event.type == ALLEGRO_EVENT_TIMER){		
+		if (event.type == ALLEGRO_EVENT_TIMER){
+			//limpando a tela:
+			al_clear_to_color(al_map_rgb(0, 0, 0));		
 			//al_draw_bitmap(imagem, x, y, flags);
 			al_draw_bitmap(background, 0, 0, 0);
-			al_draw_text(font, al_map_rgb(255, 255, 255), 540, 190, ALLEGRO_ALIGN_CENTRE, "START");
-			al_draw_text(font, al_map_rgb(0, 255, 255), 540, 290, ALLEGRO_ALIGN_CENTRE, "MENU");
-			al_draw_text(font, al_map_rgb(0, 255, 255), 540, 390, ALLEGRO_ALIGN_CENTER, "EXIT");
-    		al_flip_display();														//Insere as modificações realizadas nos buffers de tela
-		}
-		else if (event.type == 42) break;											//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
 
-		// Exibindo o estado atual
-		if (estado_atual.START == 1) {
-			al_draw_text(font, al_map_rgb(0, 255, 255), 540, 190, ALLEGRO_ALIGN_CENTRE, "START");
-		} 
-		else if (estado_atual.MENU == 1) {
-			al_draw_text(font, al_map_rgb(0, 255, 255), 540, 290, ALLEGRO_ALIGN_CENTRE, "MENU");
+			al_draw_text(font2, al_map_rgb(0, 0, 0), 560, 50, ALLEGRO_ALIGN_CENTER, "RUN AND GUN");
+			al_draw_text(font3, al_map_rgb(0, 0, 0), 900, 655, ALLEGRO_ALIGN_CENTER, "ANTONIO R.F.");
+			
+			if (estado_atual.MENU == 1)
+				al_draw_text(font, al_map_rgb(0, 255, 255), 540, 290, ALLEGRO_ALIGN_CENTRE, "MENU");
+			else
+				al_draw_text(font, al_map_rgb(255, 255, 255), 540, 290, ALLEGRO_ALIGN_CENTRE, "MENU");
+			
+			if (estado_atual.START == 1)
+				al_draw_text(font, al_map_rgb(0, 255, 255), 540, 390, ALLEGRO_ALIGN_CENTRE, "START");
+			else
+				al_draw_text(font, al_map_rgb(255, 255, 255), 540, 390, ALLEGRO_ALIGN_CENTRE, "START");
+			
+			if (estado_atual.SAIR == 1)
+				al_draw_text(font, al_map_rgb(0, 255, 255), 540, 490, ALLEGRO_ALIGN_CENTER, "EXIT");
+			else
+				al_draw_text(font, al_map_rgb(255, 255, 255), 540, 490, ALLEGRO_ALIGN_CENTER, "EXIT");
+    		
+			al_flip_display();														//Insere as modificações realizadas nos buffers de tela
 		}
-		else if (estado_atual.MENU == 1) {
-			al_draw_text(font, al_map_rgb(0, 255, 255), 540, 390, ALLEGRO_ALIGN_CENTER, "EXIT");
-		}
+		else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
+			break;											//Evento de clique no "X" de fechamento da tela. Encerra o programa graciosamente.
+
 		
 	}
 
-	al_destroy_font(font);														 //Destrutor da fonte padrão
 	al_destroy_display(disp);												 //Destrutor da tela
 	al_destroy_timer(timer);														//Destrutor do relógio
 	al_destroy_event_queue(queue);													//Destrutor da fila
 	al_destroy_bitmap(background);
 	al_destroy_font(font);
+	al_destroy_font(font2);
+	al_destroy_font(font3);
 
 	return 0;
 }
