@@ -1,4 +1,5 @@
-//Compilação: gcc main.c cria_mundo.c -o AS $(pkg-config allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 --libs --cflags)
+//Compilação: gcc main.c cria_mundo.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
+
 
 #include <allegro5/allegro5.h>														//Biblioteca base do Allegro
 #include <allegro5/allegro_font.h>													//Biblioteca de fontes do Allegro
@@ -11,8 +12,14 @@
 
 
 int main(){
-	al_init();																		//Faz a preparação de requisitos da biblioteca Allegro
-	al_install_keyboard();															//Habilita a entrada via teclado (eventos de teclado), no programa
+	//Faz a preparação de requisitos da biblioteca Allegro
+	al_init();
+	//Habilita a entrada via teclado (eventos de teclado), no programa
+	al_install_keyboard();
+	//Inicializando o addon de imagens:
+	al_init_image_addon();
+	//Inificaçizando o addon de fontes:
+	al_init_ttf_addon();
 
 	ALLEGRO_TIMER* timer = al_create_timer(1.0 / 30.0);					 //Cria o relógio do jogo; isso indica quantas atualizações serão realizadas por segundo (30, neste caso)
 	ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();							//Cria a fila de eventos; todos os eventos (programação orientada a eventos) 
@@ -24,11 +31,6 @@ int main(){
 
 	ALLEGRO_EVENT event;															//Variável que guarda um evento capturado, sua estrutura é definida em: https://www.allegro.cc/manual/5/ALLEGRO_EVENT
 	al_start_timer(timer);															//Função que inicializa o relógio do programa
-
-	//Inicializando o addon de imagens:
-	al_init_image_addon();
-	//Inificaçizando o addon de fontes:
-	al_init_ttf_addon();
 
 	//Carregando a imagem e salvando ela como "background":
 	ALLEGRO_BITMAP* background = al_load_bitmap("Pictures/back.png"); 
@@ -51,10 +53,9 @@ int main(){
 
 
 
-
 	while(1){																		//Laço principal do programa
 		al_wait_for_event(queue, &event);								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
-		
+	
 		//evento de tecla pressionada
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (event.keyboard.keycode) {
@@ -91,11 +92,15 @@ int main(){
 				//ENTER:
 				case ALLEGRO_KEY_ENTER:
 					//se apertou sair, sai!
-					if (estado_atual.SAIR == 1)
+					if (estado_atual.SAIR == 1) {
 						return 0;
+					}
 					//se aperto start, starta o mundo:
-					if (estado_atual.START == 1)
+					if (estado_atual.START == 1) {
 						cria_mundo(disp);
+						estado_atual.START = 0;
+						estado_atual.MENU = 1;
+					}
 					break;
 			}
 		}
