@@ -1,4 +1,5 @@
 #include "entidades.h"
+#include <allegro5/bitmap_draw.h>
 #include <allegro5/bitmap_io.h>
 #include <stdio.h>
 
@@ -124,3 +125,54 @@ void coloca_projetil(struct projetil *pjt) {
     al_draw_scaled_bitmap(pjt->sprite, 0,0,16,16, pjt->posicao_x, pjt->posicao_y, pjt->largura, pjt->altura, 0);
 }
 
+struct inimigo *cria_inimigo(int largura, int altura, int posicao_x, int posicao_y) {
+    struct inimigo *i = malloc(sizeof(struct inimigo));
+    if (!i)
+        return NULL;
+
+    i->largura = largura;
+    i->altura = altura;
+    i->posicao_x = posicao_x;
+    i->posicao_y = posicao_y;
+
+    i->sprite = al_load_bitmap("Sprites/inimigo.png");
+
+    return i;
+}
+
+void destroi_inimigo(struct inimigo *i) {
+    if (i) {
+        al_destroy_bitmap(i->sprite);
+        free(i);
+    }
+}
+
+void coloca_inimigo(struct inimigo *i, float movendo_mundo) {
+    al_draw_scaled_bitmap(i->sprite, 0, 0, 57, 42, i->posicao_x+movendo_mundo, i->posicao_y, i->largura, i->altura, 0);
+}
+
+struct explosao *cria_explosao(int largura, int altura, int posicao_x, int posicao_y) {
+    struct explosao *e = malloc(sizeof(struct explosao));
+    if (!e)
+        return NULL;
+
+    e->largura = largura;
+    e->altura = altura;
+    e->posicao_x = posicao_x;
+    e->posicao_y = posicao_y;
+
+    e->sprite = al_load_bitmap("Sprites/explosion.png");
+
+    return e;
+}
+
+void destroi_explosao(struct explosao *e) {
+    if (e) {
+        al_destroy_bitmap(e->sprite);
+        free(e);
+    }
+}
+
+void coloca_explosao(struct explosao *e) {
+    al_draw_scaled_bitmap(e->sprite, 0, 0, 112, 128, e->posicao_x, e->posicao_y, e->largura, e->altura, 0);
+}

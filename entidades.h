@@ -60,5 +60,35 @@ void destroi_projetil(struct projetil *pjt);
 
 void coloca_projetil(struct projetil *pjt);
 
+struct inimigo {
+    ALLEGRO_BITMAP *sprite;
+    int largura;
+    int altura;
+    int frame_atual;
+    float posicao_x;
+    float posicao_y;
+};
+
+struct inimigo *cria_inimigo(int largura, int altura, int posicao_x, int posicao_y);
+
+void destroi_inimigo(struct inimigo *i);
+
+void coloca_inimigo(struct inimigo *i, float movendo_mundo);
+
+struct explosao {
+    ALLEGRO_BITMAP *sprite;
+    int largura;
+    int altura;
+    int frame_atual;
+    float posicao_x;
+    float posicao_y;
+};
+
+struct explosao *cria_explosao(int largura, int altura, int posicao_x, int posicao_y);
+
+void destroi_explosao(struct explosao *e);
+
+void coloca_explosao(struct explosao *e);
+
 
 #endif

@@ -46,6 +46,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	//criando projetil:
 	struct projetil *pjt = cria_projetil(64, 64, 500, 500, 14);
 
+	//criando inimigos:
+	struct inimigo *inimigo1 = cria_inimigo(171, 126, 3000, 480);
+
 
 	//criando variáveis booleanas para andar:
 	bool andando_direita = false;
@@ -62,6 +65,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	//criando variáveis para ajudar no tiro:
 	bool atirando = false;
 	bool sentido_positivo = true;
+
+	//criando variáveis para ajudar no impacto:
+	int pos_inimigo1 = inimigo1->posicao_x;
+	bool morte_inimigo_1 = false;
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
 	bool controle = true;
@@ -199,6 +206,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 					coloca_arma(a);
 				}
 			}
+			
+			//Coloando inimigo1:
+			if (!morte_inimigo_1)
+				coloca_inimigo(inimigo1, movendo_mundo);
 
 			//Colocando disparo:
 			if (atirando) {
@@ -210,11 +221,26 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				pjt->posicao_x += pjt->velocidade;
 				coloca_projetil(pjt);
 
+				//impacto inimigo 1:
+				if (!morte_inimigo_1) {
+   					bool colidiu = (pjt->posicao_x < inimigo1->posicao_x + inimigo1->largura + movendo_mundo) && (pjt->posicao_x + pjt->largura > inimigo1->posicao_x + movendo_mundo) && (pjt->posicao_y < inimigo1->posicao_y + inimigo1->altura) && (pjt->posicao_y + pjt->altura > inimigo1->posicao_y);
+
+					if (colidiu) {
+						//criando explosão para morte do inimigo:
+						struct explosao *e = cria_explosao(224, 256, inimigo1->posicao_x+movendo_mundo, 410);
+						coloca_explosao(e);
+						destroi_inimigo(inimigo1);
+						destroi_explosao(e);
+						morte_inimigo_1 = true;
+					}
+				}
+
 				if (pjt->velocidade >= 100 || pjt->velocidade <= -72) {
 					atirando = false;
 					sentido_positivo = true;
 				}
 			}
+
 
 			//condição de parada do meu jogo:
 			if (-movendo_mundo > 11850)
@@ -231,6 +257,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	destroi_personagem(p);
 	destroi_arma(a);
 	destroi_projetil(pjt);
+	//destroi_inimigo(inimigo1);
 	al_destroy_timer(timer);														//Destrutor do relógio
 	al_destroy_event_queue(queue);													//Destrutor da fila
 	al_destroy_bitmap(background_jogo);
