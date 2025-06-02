@@ -1,5 +1,5 @@
 #include "cria_mundo.h"
-#include "personagem.h"
+#include "entidades.h"
 #include <stdio.h>
 
 #include <allegro5/allegro_primitives.h>
@@ -37,9 +37,14 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	ALLEGRO_BITMAP* background_jogo = al_load_bitmap("Pictures/bulkhead-wallsx3.png"); 
 	ALLEGRO_BITMAP* background_jogo2 = al_load_bitmap("Pictures/lava-background-preview.png");
 
-
 	//criando o meu personagem:
 	struct personagem *p = cria_personagem(160, 240, 400, 340);
+
+	//criando arma:
+	struct arma *a = cria_arma(-64, 64, 570, 500, 1);
+
+	//criando projetil:
+	struct projetil *pjt = cria_projetil(64, 64, 500, 500, 14);
 
 
 	//criando variáveis booleanas para andar:
@@ -54,6 +59,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
     const float chao = 340;
 	bool no_ar = false;
 
+	//criando variáveis para ajudar no tiro:
+	bool atirando = false;
+	bool sentido_positivo = true;
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
 	bool controle = true;
@@ -66,6 +74,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			switch(event.keyboard.keycode) {
 				case ALLEGRO_KEY_RIGHT:
 					p->frame_atual = 1;
+					a->chave = 1;
 					andando_direita = true;
 					//conferindo se está virado a esquerda,
 					//se estiver, eu viro ele para a direita:
@@ -74,6 +83,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 					break;
 				case ALLEGRO_KEY_LEFT:
 					p->frame_atual = 1;
+					a->chave = 1;
 					//conferindo se está virado a direita,
 					//se estiver, eu viro ele para a esquerda:
 					if (p->largura > 0)
@@ -82,6 +92,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 					break;
 				case ALLEGRO_KEY_DOWN:
 					p->frame_atual = 3;
+					a->chave = 0;
 					break;
 				case ALLEGRO_KEY_UP:
 					if (!no_ar) {
@@ -89,7 +100,22 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 						no_ar = true;
 						p->frame_atual = 2;
 					}
+					a->chave = 0;
 					break;
+				case ALLEGRO_KEY_SPACE:
+					p->frame_atual = 4;
+					a->chave = 1;
+					if (p->largura < 0)
+						sentido_positivo = false;
+					if (!atirando) {
+						atirando = true;
+						if (p->largura > 0)
+							pjt->posicao_x = 510;  
+						else
+							pjt->posicao_x = 210;
+
+						pjt->velocidade = 14;
+					}
 			}
 		}
 		//Evento de soltar tecla:
@@ -105,10 +131,15 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 					break;
 				case ALLEGRO_KEY_DOWN:
 					p->frame_atual = 0;
+					a->chave = 1;
 					break;
 				case ALLEGRO_KEY_UP:
 					p->frame_atual = 0;
+					a->chave = 1;
 					break;
+				case ALLEGRO_KEY_SPACE:
+					p->frame_atual = 0;
+					a->chave = 1;
 			}
 		}
         //Evento que captura eventos da fila, inserindo os mesmos na variável de eventos:
@@ -150,15 +181,46 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			char texto_posicao[50];
 			sprintf(texto_posicao, "KM: %.0f", -movendo_mundo);
 			al_draw_text(font, al_map_rgb(255, 255, 0), 150, 20, ALLEGRO_ALIGN_CENTER, texto_posicao);
-			
-			//condição de parada do meu jogo:
-			//if (-movendo_mundo > 5000)
-			//	break;
 
 			//Colocando personagem:
 			coloca_personagem(p);
 
-            // Atualiza a tela:
+			//Colocando arma:
+			if (a->chave == 1) {
+				if (andando_esquerda) {
+					a->posicao_x = 300;
+					coloca_arma(a);
+				}
+				else if (andando_direita) {
+					a->posicao_x = 570;
+					coloca_arma(a);
+				}
+				else {
+					coloca_arma(a);
+				}
+			}
+
+			//Colocando disparo:
+			if (atirando) {
+				if (sentido_positivo) 
+					pjt->velocidade += 4;
+				else
+					pjt->velocidade -= 4;
+
+				pjt->posicao_x += pjt->velocidade;
+				coloca_projetil(pjt);
+
+				if (pjt->velocidade >= 100 || pjt->velocidade <= -72) {
+					atirando = false;
+					sentido_positivo = true;
+				}
+			}
+
+			//condição de parada do meu jogo:
+			if (-movendo_mundo > 11850)
+				break;
+
+			// Atualiza a tela:
             al_flip_display();
         }																																																				//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)
         else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
@@ -167,6 +229,8 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 
 	destroi_personagem(p);
+	destroi_arma(a);
+	destroi_projetil(pjt);
 	al_destroy_timer(timer);														//Destrutor do relógio
 	al_destroy_event_queue(queue);													//Destrutor da fila
 	al_destroy_bitmap(background_jogo);
