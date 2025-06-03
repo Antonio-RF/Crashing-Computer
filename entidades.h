@@ -69,11 +69,14 @@ struct inimigo {
     float posicao_y;
 };
 
-struct inimigo *cria_inimigo(int largura, int altura, int posicao_x, int posicao_y);
+//TIPOS:
+// 1 - inimigo 1;
+// 2 - inimigo 2;
+struct inimigo *cria_inimigo(int largura, int altura, int posicao_x, int posicao_y, int tipo);
 
 void destroi_inimigo(struct inimigo *i);
 
-void coloca_inimigo(struct inimigo *i, float movendo_mundo);
+void coloca_inimigo(struct inimigo *i, float movendo_mundo, int tipo);
 
 struct explosao {
     ALLEGRO_BITMAP *sprite;
@@ -89,6 +92,25 @@ struct explosao *cria_explosao(int largura, int altura, int posicao_x, int posic
 void destroi_explosao(struct explosao *e);
 
 void coloca_explosao(struct explosao *e);
+
+void colisao_inimigo(bool *morte_inimigo, struct projetil *pjt, struct inimigo *i, float movendo_mundo, int controle);
+
+struct inimigo_bird {
+    ALLEGRO_BITMAP *sprites[5];
+    int largura;
+    int altura;
+    int frame_atual;
+    float posicao_x;
+    float posicao_y;
+};
+
+struct inimigo_bird *cria_inimigo_bird(int largura, int altura, int posicao_x, int posicao_y);
+
+void destroi_inimigo_bird(struct inimigo_bird *ib);
+
+void coloca_inimigo_bird(struct inimigo_bird *ib, int frame_atual, float movendo_mundo);
+
+void colisao_inimigo_bird(bool *morte_inimigo, struct projetil *pjt, struct inimigo_bird *i, float movendo_mundo);
 
 
 #endif

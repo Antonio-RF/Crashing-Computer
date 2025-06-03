@@ -47,7 +47,11 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	struct projetil *pjt = cria_projetil(64, 64, 500, 500, 14);
 
 	//criando inimigos:
-	struct inimigo *inimigo1 = cria_inimigo(171, 126, 3000, 480);
+	struct inimigo *inimigo1 = cria_inimigo(171, 126, 6000, 480, 1);
+	struct inimigo *inimigo2 = cria_inimigo(-160, 128, 4000, 460, 2);
+	struct inimigo *inimigo3 = cria_inimigo(-288, 228, 4000, 350, 3);
+	struct inimigo_bird *inimigo_bird = cria_inimigo_bird(128, 128, 1000, 100);
+	struct inimigo_bird *inimigo_bird2 = cria_inimigo_bird(128, 128, 10000, 100);
 
 
 	//criando variáveis booleanas para andar:
@@ -65,10 +69,26 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	//criando variáveis para ajudar no tiro:
 	bool atirando = false;
 	bool sentido_positivo = true;
+	bool cima = false;
+	bool controle2 = false;
+	int salva_pjt_y = pjt->posicao_y;
 
 	//criando variáveis para ajudar no impacto:
 	int pos_inimigo1 = inimigo1->posicao_x;
 	bool morte_inimigo_1 = false;
+	int pos_inimigo2 = inimigo2->posicao_x;
+	bool morte_inimigo_2 = false;
+	int pos_inimigo3 = inimigo3->posicao_x;
+	bool morte_inimigo_3 = false;
+	int pos_inimigo_bird = inimigo_bird->posicao_x;
+	bool morte_inimigo_bird = false;
+	int pos_inimigo_bird2 = inimigo_bird2->posicao_x;
+	bool morte_inimigo_bird2 = false;
+
+	//criando variáveis para o inimigo_bird:
+	int count_frames_bird = 0;
+	int count_frames_bird2 = 0;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
 	bool controle = true;
@@ -123,6 +143,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 
 						pjt->velocidade = 14;
 					}
+					break;
+				case ALLEGRO_KEY_W:
+					cima = true;
+					break;
 			}
 		}
 		//Evento de soltar tecla:
@@ -147,6 +171,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				case ALLEGRO_KEY_SPACE:
 					p->frame_atual = 0;
 					a->chave = 1;
+					break;
+				case ALLEGRO_KEY_W:
+					cima = false;
+					break;
 			}
 		}
         //Evento que captura eventos da fila, inserindo os mesmos na variável de eventos:
@@ -207,9 +235,33 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				}
 			}
 			
-			//Coloando inimigo1:
+			//Colocando inimigo1:
 			if (!morte_inimigo_1)
-				coloca_inimigo(inimigo1, movendo_mundo);
+				coloca_inimigo(inimigo1, movendo_mundo, 1);
+			//Colocando inimigo2:
+			if (!morte_inimigo_2) {
+				coloca_inimigo(inimigo2, movendo_mundo, 2);
+				inimigo2->posicao_x -= 7;
+			}
+			//Colocando inimigo3:
+			if (!morte_inimigo_3) {
+				coloca_inimigo(inimigo3, movendo_mundo, 3);
+			}
+			//Colocando inimigo_bird:
+			if (!morte_inimigo_bird) {
+				coloca_inimigo_bird(inimigo_bird, count_frames_bird, movendo_mundo);
+				count_frames_bird++;
+				if (count_frames_bird == 4)
+					count_frames_bird = 0;
+			}
+			//Colocando inimigo_bird2:
+			if (!morte_inimigo_bird2) {
+				coloca_inimigo_bird(inimigo_bird2, count_frames_bird2, movendo_mundo);
+				count_frames_bird2++;
+				if (count_frames_bird2 == 4)
+					count_frames_bird2 = 0;
+			}
+
 
 			//Colocando disparo:
 			if (atirando) {
@@ -217,35 +269,57 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 					pjt->velocidade += 4;
 				else
 					pjt->velocidade -= 4;
+				
 
-				pjt->posicao_x += pjt->velocidade;
+				if (!cima && !controle2) {
+					pjt->posicao_x += pjt->velocidade;
+				}
+				else if (cima && !controle2) {
+					if (sentido_positivo)
+						pjt->posicao_y -= pjt->velocidade;
+					else
+						pjt->posicao_y += pjt->velocidade;
+					controle2 = true;
+				}
+				else if (!cima && controle2) {
+					if (sentido_positivo)
+						pjt->posicao_y -= pjt->velocidade;
+					else
+						pjt->posicao_y += pjt->velocidade;
+				}
+				else if (cima && controle2) {
+					if (sentido_positivo)
+						pjt->posicao_y -= pjt->velocidade;
+					else
+						pjt->posicao_y += pjt->velocidade;
+				}
+
+
 				coloca_projetil(pjt);
 
 				//impacto inimigo 1:
-				if (!morte_inimigo_1) {
-   					bool colidiu = (pjt->posicao_x < inimigo1->posicao_x + inimigo1->largura + movendo_mundo) && (pjt->posicao_x + pjt->largura > inimigo1->posicao_x + movendo_mundo) && (pjt->posicao_y < inimigo1->posicao_y + inimigo1->altura) && (pjt->posicao_y + pjt->altura > inimigo1->posicao_y);
+				colisao_inimigo(&morte_inimigo_1, pjt, inimigo1, movendo_mundo, 0);
+				//impacto inimigo 2:
+				colisao_inimigo(&morte_inimigo_2, pjt, inimigo2, movendo_mundo, 1);
+				//impacto inimigo 3:
+				colisao_inimigo(&morte_inimigo_3, pjt, inimigo3, movendo_mundo, 1);
+				//impacto inimigo bird:
+				colisao_inimigo_bird(&morte_inimigo_bird, pjt, inimigo_bird, movendo_mundo);
+				//impacto inimigo bird2:
+				colisao_inimigo_bird(&morte_inimigo_bird2, pjt, inimigo_bird2, movendo_mundo);
 
-					if (colidiu) {
-						//criando explosão para morte do inimigo:
-						struct explosao *e = cria_explosao(224, 256, inimigo1->posicao_x+movendo_mundo, 410);
-						coloca_explosao(e);
-						destroi_inimigo(inimigo1);
-						destroi_explosao(e);
-						morte_inimigo_1 = true;
-					}
-				}
-
-				if (pjt->velocidade >= 100 || pjt->velocidade <= -72) {
+				if ((pjt->velocidade >= 100 || pjt->velocidade <= -72)) {
 					atirando = false;
 					sentido_positivo = true;
+					controle2 = false;
+					pjt->posicao_y = salva_pjt_y;
 				}
 			}
-
 
 			//condição de parada do meu jogo:
 			if (-movendo_mundo > 11850)
 				break;
-
+			
 			// Atualiza a tela:
             al_flip_display();
         }																																																				//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)
