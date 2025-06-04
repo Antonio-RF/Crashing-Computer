@@ -288,3 +288,16 @@ void colisao_inimigo_bird(bool *morte_inimigo, struct projetil *pjt, struct inim
         }
     }
 }
+
+void coloca_projetil_bird(struct projetil *pjt, float movendo_mundo, int adicao_y) {
+    al_draw_scaled_bitmap(pjt->sprite, 0,0,16,16, pjt->posicao_x+movendo_mundo, pjt->posicao_y+adicao_y, pjt->largura, pjt->altura, 0);
+}
+
+void atira_bird(struct projetil *pjt_bird, float movendo_mundo, int tempo_disparo) {
+    while (tempo_disparo >= 60) {
+        pjt_bird->velocidade += 4;
+        pjt_bird->posicao_y += pjt_bird->velocidade;
+        coloca_projetil_bird(pjt_bird, movendo_mundo+40, 40);
+        tempo_disparo++;
+    }
+}

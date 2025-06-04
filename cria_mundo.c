@@ -53,6 +53,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	struct inimigo_bird *inimigo_bird = cria_inimigo_bird(128, 128, 1000, 100);
 	struct inimigo_bird *inimigo_bird2 = cria_inimigo_bird(128, 128, 10000, 100);
 
+	//criando projetil dos birds:
+	struct projetil *pjt_bird = cria_projetil(64, 64, 1000, 100, 14);
+
 
 	//criando variáveis booleanas para andar:
 	bool andando_direita = false;
@@ -88,6 +91,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	//criando variáveis para o inimigo_bird:
 	int count_frames_bird = 0;
 	int count_frames_bird2 = 0;
+	int count_projetil_bird = 0;
+	int salva_arg2_bird = pjt_bird->posicao_y+40;
+	//int salva_arg3_bird = 40;
+	int tempo_disparo = 0;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
@@ -315,6 +322,20 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 					pjt->posicao_y = salva_pjt_y;
 				}
 			}
+
+
+			//Colocando projeteis dos birds:
+			//atira_bird(pjt_bird, movendo_mundo, tempo_disparo);
+			pjt_bird->velocidade += 4;
+			pjt_bird->posicao_y += pjt_bird->velocidade;
+			coloca_projetil_bird(pjt_bird, movendo_mundo+40, 40);
+			tempo_disparo++;
+			if (pjt_bird->velocidade >= 300) {
+				pjt_bird->posicao_y = salva_arg2_bird;
+				pjt_bird->velocidade = 14;
+			}
+			
+			
 
 			//condição de parada do meu jogo:
 			if (-movendo_mundo > 11850)
