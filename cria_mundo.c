@@ -95,6 +95,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	int salva_arg2_bird = pjt_bird->posicao_y+40;
 	//int salva_arg3_bird = 40;
 	int tempo_disparo = 0;
+	bool controle_destroi_projetil_bird = false;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
@@ -325,14 +326,12 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 
 
 			//Colocando projeteis dos birds:
-			//atira_bird(pjt_bird, movendo_mundo, tempo_disparo);
-			pjt_bird->velocidade += 4;
-			pjt_bird->posicao_y += pjt_bird->velocidade;
-			coloca_projetil_bird(pjt_bird, movendo_mundo+40, 40);
-			tempo_disparo++;
-			if (pjt_bird->velocidade >= 300) {
-				pjt_bird->posicao_y = salva_arg2_bird;
-				pjt_bird->velocidade = 14;
+			if (!morte_inimigo_bird) {
+				atira_bird(pjt_bird, movendo_mundo, salva_arg2_bird);
+			}
+			if (morte_inimigo_bird && !controle_destroi_projetil_bird) {
+				destroi_projetil(pjt_bird);
+				controle_destroi_projetil_bird = true;
 			}
 			
 			
@@ -352,7 +351,11 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	destroi_personagem(p);
 	destroi_arma(a);
 	destroi_projetil(pjt);
-	//destroi_inimigo(inimigo1);
+	destroi_inimigo(inimigo1);
+	destroi_inimigo(inimigo2);
+	destroi_inimigo(inimigo3);
+	destroi_inimigo_bird(inimigo_bird);
+	destroi_inimigo_bird(inimigo_bird2);
 	al_destroy_timer(timer);														//Destrutor do relógio
 	al_destroy_event_queue(queue);													//Destrutor da fila
 	al_destroy_bitmap(background_jogo);

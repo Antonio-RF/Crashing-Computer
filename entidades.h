@@ -114,6 +114,6 @@ void colisao_inimigo_bird(bool *morte_inimigo, struct projetil *pjt, struct inim
 
 void coloca_projetil_bird(struct projetil *pjt, float movendo_mundo, int adicao_y);
 
-void atira_bird(struct projetil *pjt_bird, float movendo_mundo, int tempo_disparo);
+void atira_bird(struct projetil *pjt_bird, float movendo_mundo, int salva);
 
 #endif
