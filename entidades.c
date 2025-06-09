@@ -269,7 +269,9 @@ void destroi_inimigo_bird(struct inimigo_bird *ib) {
 
 void coloca_inimigo_bird(struct inimigo_bird *ib, int frame_atual, float movendo_mundo) {
     ib->frame_atual = frame_atual;
-    al_draw_scaled_bitmap(ib->sprites[ib->frame_atual], 0, 0, 32, 32, ib->posicao_x+movendo_mundo, ib->posicao_y,ib->largura, ib->altura, 0);
+    int temp;
+    temp = frame_atual / 16;
+    al_draw_scaled_bitmap(ib->sprites[temp], 0, 0, 32, 32, ib->posicao_x+movendo_mundo, ib->posicao_y,ib->largura, ib->altura, 0);
 }
 
 void colisao_inimigo_bird(bool *morte_inimigo, struct projetil *pjt, struct inimigo_bird *i, float movendo_mundo) {

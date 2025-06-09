@@ -1,5 +1,6 @@
 #include "cria_mundo.h"
 #include "entidades.h"
+#include "tela_game_over.h"
 #include <stdio.h>
 
 #include <allegro5/allegro_primitives.h>
@@ -323,14 +324,14 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			if (!morte_inimigo_bird) {
 				coloca_inimigo_bird(inimigo_bird, count_frames_bird, movendo_mundo);
 				count_frames_bird++;
-				if (count_frames_bird == 4)
+				if (count_frames_bird == 64)
 					count_frames_bird = 0;
 			}
 			//Colocando inimigo_bird2:
 			if (!morte_inimigo_bird2) {
 				coloca_inimigo_bird(inimigo_bird2, count_frames_bird2, movendo_mundo);
 				count_frames_bird2++;
-				if (count_frames_bird2 == 4)
+				if (count_frames_bird2 == 64)
 					count_frames_bird2 = 0;
 			}
 
@@ -459,6 +460,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			//condição de parada do meu jogo:
 			if (-movendo_mundo > 11850 || (coracao1 == false && coracao2 == false && coracao3 == false)) {
 				acabou_mundo = true;
+				tela_game_over(disp);
 				break;
 			}
         }																																																				//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)

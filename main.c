@@ -1,4 +1,4 @@
-//Compilação: gcc main.c cria_mundo.c entidades.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
+//Compilação: gcc main.c cria_mundo.c entidades.c tela_game_over.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
 
 
 #include <allegro5/allegro5.h>														//Biblioteca base do Allegro
@@ -107,7 +107,7 @@ int main(){
 
 		if (event.type == ALLEGRO_EVENT_TIMER){
 			//limpando a tela:
-			al_clear_to_color(al_map_rgb(0, 0, 0));		
+			//al_clear_to_color(al_map_rgb(0, 0, 0));		
 			//al_draw_bitmap(imagem, x, y, flags);
 			al_draw_bitmap(background, 0, 0, 0);
 
