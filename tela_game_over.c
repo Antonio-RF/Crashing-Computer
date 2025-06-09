@@ -20,10 +20,21 @@ void tela_game_over(ALLEGRO_DISPLAY* disp) {
 	al_start_timer(timer);	
 
     ALLEGRO_FONT* font = al_load_ttf_font("Pictures/minha_fonte.ttf", 250, 0);
+	ALLEGRO_FONT* font2 = al_load_ttf_font("Pictures/minha_fonte.ttf", 50, 0);
 
-    while(1){																		//Laço principal do programa
-		al_wait_for_event(queue, &event);								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
+	bool controle = true;
+	int pingando = 0;
+    while(controle){																		
+		al_wait_for_event(queue, &event);								
 
+		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+			switch (event.keyboard.keycode) {
+				//ENTER:
+				case ALLEGRO_KEY_ENTER:
+					controle = false;
+					break;
+			}
+		}
 
 		if (event.type == ALLEGRO_EVENT_TIMER){
 			//limpando a tela:
@@ -31,6 +42,15 @@ void tela_game_over(ALLEGRO_DISPLAY* disp) {
 
 			al_draw_text(font, al_map_rgb(255, 0, 0), 560, 200, ALLEGRO_ALIGN_CENTER, "GAME OVER");
 			
+			if (pingando >= 15 && pingando < 30) {
+				al_draw_text(font2, al_map_rgb(255, 255, 0), 560, 500, ALLEGRO_ALIGN_CENTER, "Press ENTER to return to the menu");
+				pingando++;
+			}
+			else if (pingando == 30)
+				pingando = 0;
+			else
+				pingando++;
+
     		
 			al_flip_display();														//Insere as modificações realizadas nos buffers de tela
 		}

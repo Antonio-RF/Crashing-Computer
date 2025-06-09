@@ -311,10 +311,25 @@ int colisao_personagem_com_bird(int *count_vida, struct projetil *pjt, struct pe
     // Ajustando a posição do projétil considerando o movimento do mundo e a posição do pjt_bird (+40 tanto no x quanto no y):
     if (pjt == NULL || p == NULL)
         return -1;
+    
+    // Se ele estiver no sentido esquerda para direita, muda largura para negativo:
+    int p_largura_abs;
+    if (p->largura < 0)
+        p_largura_abs = -p->largura;
+    else
+        p_largura_abs = p->largura;
+
+    // Definindo a posição X real do personagem:
+    float p_x_efetivo;
+    if (p->largura < 0)
+        p_x_efetivo = p->posicao_x + p->largura;
+    else
+        p_x_efetivo = p->posicao_x;
+
     float proj_x = pjt->posicao_x + movendo_mundo + 40;
     float proj_y = pjt->posicao_y + 40;
     
-    bool colidiu = (proj_x < p->posicao_x + p->largura) && (proj_x + pjt->largura > p->posicao_x) && (proj_y < p->posicao_y + p->altura) && (proj_y + pjt->altura > p->posicao_y);
+     bool colidiu = (proj_x < p_x_efetivo + p_largura_abs) && (proj_x + pjt->largura > p_x_efetivo) && (proj_y < p->posicao_y + p->altura) && (proj_y + pjt->altura > p->posicao_y);
 
     if (colidiu && pjt->velocidade < 100) {
         if (*count_vida > 0) {
@@ -360,4 +375,17 @@ int colisao_personagem_com_inimigo2(int *count_vida, struct inimigo *inimigo, st
         return *count_vida;
     }
     return -1;
+}
+
+void coloca_projetil_lobo(struct projetil *pjt, float movendo_mundo) {
+    al_draw_scaled_bitmap(pjt->sprite, 0,0,16,16, pjt->posicao_x+movendo_mundo-310, pjt->posicao_y+180, pjt->largura, pjt->altura, 0);
+}
+
+void atira_lobo(struct projetil *pjt_lobo, float movendo_mundo, int salva) {
+    pjt_lobo->posicao_x -= pjt_lobo->velocidade;
+    coloca_projetil_lobo(pjt_lobo, movendo_mundo+40);
+    if (pjt_lobo->posicao_x <= -300) {
+        pjt_lobo->posicao_x = salva;
+        pjt_lobo->velocidade = 14;
+    }
 }

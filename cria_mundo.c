@@ -1,6 +1,7 @@
 #include "cria_mundo.h"
 #include "entidades.h"
 #include "tela_game_over.h"
+#include "tela_pause.h"
 #include <stdio.h>
 
 #include <allegro5/allegro_primitives.h>
@@ -45,12 +46,15 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	struct arma *a = cria_arma(-64, 64, 570, 500, 1);
 
 	//criando projetil:
-	struct projetil *pjt = cria_projetil(64, 64, 500, 500, 14);
+	//struct projetil *pjt = cria_projetil(64, 64, 500, 500, 14);
+	struct projetil *pjt = cria_projetil(64, 64, 500, p->posicao_y+160, 14);
 
 	//criando inimigos:
 	struct inimigo *inimigo1 = cria_inimigo(171, 126, 6000, 480, 1);
 	struct inimigo *inimigo2 = cria_inimigo(-160, 128, 4000, 460, 2);
-	struct inimigo *inimigo3 = cria_inimigo(-288, 228, 4000, 350, 3);
+	//testando hit de inimigo3:
+	struct inimigo *inimigo3 = cria_inimigo(-432, 342, 3000, 250, 3);
+
 	struct inimigo *inimigo4 = cria_inimigo(-160, 128, 7000, 460, 2);
 	struct inimigo *inimigo5 = cria_inimigo(-160, 128, 9000, 460, 2);
 	struct inimigo *inimigo6 = cria_inimigo(-160, 128, 11000, 460, 2);
@@ -61,6 +65,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	//criando projetil dos birds:
 	struct projetil *pjt_bird = cria_projetil(64, 64, 1000, 100, 14);
 	struct projetil *pjt_bird2 = cria_projetil(64, 64, 10000, 100, 14);
+
+	//criando projeteis dos inimigos lobos:
+	struct projetil *pjt_lobo = cria_projetil(64, 64, 3000, 250, 40);
 
 	//criando os corações que servirão de vida:
 	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");
@@ -123,6 +130,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	int salva_arg2_bird2 = pjt_bird2->posicao_y+40;
 	bool controle_destroi_projetil_bird2 = false;
 
+	//criando variáveis para o inimigo_lobo:
+	int salva_arg3_lobo = pjt_lobo->posicao_x;
+
 	//cirando variáveis para a vida do personagem:
 	int count_vidas = 3;
 	bool coracao1 = true;
@@ -139,6 +149,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 
 	//criando variáveis para controle do game-over:
 	bool acabou_mundo = false;
+
+	//criando variáveis para controle do pause:
+	int valor_funcao_pause;
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
 	bool controle = true;
@@ -197,8 +210,17 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				case ALLEGRO_KEY_W:
 					cima = true;
 					break;
+				case ALLEGRO_KEY_ESCAPE:
+					valor_funcao_pause = tela_pause(disp);
+					break;
 			}
 		}
+		//quebrando o loop principal se o valor do pause for MENU:
+		if (valor_funcao_pause == 1)
+			break;
+		else
+			al_flush_event_queue(queue);
+
 		//Evento de soltar tecla:
 		if (event.type == ALLEGRO_EVENT_KEY_UP && !acabou_mundo) {
 			switch(event.keyboard.keycode) {
@@ -412,6 +434,11 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			if (morte_inimigo_bird2 && !controle_destroi_projetil_bird2) {
 				destroi_projetil(pjt_bird2);
 				controle_destroi_projetil_bird2 = true;
+			}
+
+			//colocando projeteis dos lobos:
+			if (!morte_inimigo_3) {
+				atira_lobo(pjt_lobo, movendo_mundo, salva_arg3_lobo);
 			}
 
 

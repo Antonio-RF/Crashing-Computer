@@ -1,4 +1,4 @@
-//Compilação: gcc main.c cria_mundo.c entidades.c tela_game_over.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
+//Compilação: gcc main.c cria_mundo.c entidades.c tela_game_over.c tela_pause.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
 
 
 #include <allegro5/allegro5.h>														//Biblioteca base do Allegro
@@ -9,7 +9,6 @@
 #include <allegro5/keycodes.h>
 
 #include "cria_mundo.h"
-
 
 int main(){
 	//Faz a preparação de requisitos da biblioteca Allegro
@@ -36,7 +35,7 @@ int main(){
 	ALLEGRO_BITMAP* background = al_load_bitmap("Pictures/back.png"); 
 	//Carregando a fonte que eu desejo e salvando como "font":
 	ALLEGRO_FONT* font = al_load_ttf_font("Pictures/minha_fonte.ttf", 110, 0);
-	ALLEGRO_FONT* font2 = al_load_ttf_font("Pictures/minha_fonte2.otf", 200, 0);
+	ALLEGRO_FONT* font2 = al_load_ttf_font("Pictures/minha_fonte2.otf", 160, 0);
 	ALLEGRO_FONT* font3 = al_load_ttf_font("Pictures/minha_fonte3.ttf", 80, 0);
 
 
@@ -55,7 +54,6 @@ int main(){
 
 	while(1){																		//Laço principal do programa
 		al_wait_for_event(queue, &event);								//Função que captura eventos da fila, inserindo os mesmos na variável de eventos
-	
 		//evento de tecla pressionada
 		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (event.keyboard.keycode) {
@@ -100,6 +98,7 @@ int main(){
 						cria_mundo(disp);
 						estado_atual.START = 0;
 						estado_atual.MENU = 1;
+						al_flush_event_queue(queue);
 					}
 					break;
 			}
@@ -111,7 +110,7 @@ int main(){
 			//al_draw_bitmap(imagem, x, y, flags);
 			al_draw_bitmap(background, 0, 0, 0);
 
-			al_draw_text(font2, al_map_rgb(0, 0, 0), 560, 50, ALLEGRO_ALIGN_CENTER, "RUN AND GUN");
+			al_draw_text(font2, al_map_rgb(0, 0, 0), 530, 80, ALLEGRO_ALIGN_CENTER, "CRASHING COMPUTER");
 			al_draw_text(font3, al_map_rgb(0, 0, 0), 900, 655, ALLEGRO_ALIGN_CENTER, "ANTONIO R.F.");
 			
 			if (estado_atual.MENU == 1)

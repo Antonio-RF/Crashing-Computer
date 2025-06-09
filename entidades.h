@@ -120,4 +120,8 @@ int colisao_personagem_com_bird(int *count_vida, struct projetil *pjt, struct pe
 
 int colisao_personagem_com_inimigo2(int *count_vida, struct inimigo *inimigo, struct personagem *p, float movendo_mundo, bool *morte_inimigo_2, int *invencibilidade_frames);
 
+void coloca_projetil_lobo(struct projetil *pjt, float movendo_mundo);
+
+void atira_lobo(struct projetil *pjt_bird, float movendo_mundo, int salva);
+
 #endif
