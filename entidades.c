@@ -214,7 +214,7 @@ void colisao_inimigo(bool *morte_inimigo, struct projetil *pjt, struct inimigo *
             if (controle == 1)
                 e = cria_explosao(224, 256, i->posicao_x+movendo_mundo-240, 400);
             coloca_explosao(e);
-            destroi_inimigo(i);
+            //destroi_inimigo(i);
             destroi_explosao(e);
             *morte_inimigo = true;
             //colocando velocidade para o projeto ser "destruído" logo após.
@@ -282,7 +282,7 @@ void colisao_inimigo_bird(bool *morte_inimigo, struct projetil *pjt, struct inim
             struct explosao *e;
             e = cria_explosao(224, 256, i->posicao_x+movendo_mundo-30, 40);
             coloca_explosao(e);
-            destroi_inimigo_bird(i);
+            //destroi_inimigo_bird(i);
             destroi_explosao(e);
             *morte_inimigo = true;
             //colocando velocidade para o projeto ser "destruído" logo após.
@@ -307,6 +307,8 @@ void atira_bird(struct projetil *pjt_bird, float movendo_mundo, int salva) {
 
 int colisao_personagem_com_bird(int *count_vida, struct projetil *pjt, struct personagem *p, float movendo_mundo) {
     // Ajustando a posição do projétil considerando o movimento do mundo e a posição do pjt_bird (+40 tanto no x quanto no y):
+    if (pjt == NULL || p == NULL)
+        return -1;
     float proj_x = pjt->posicao_x + movendo_mundo + 40;
     float proj_y = pjt->posicao_y + 40;
     
@@ -330,11 +332,27 @@ int colisao_personagem_com_inimigo2(int *count_vida, struct inimigo *inimigo, st
     if (inimigo == NULL || p == NULL)
         return -1;
     
-    bool colidiu = (p->posicao_x < inimigo->posicao_x + (-inimigo->largura) + movendo_mundo) && (p->posicao_x + p->largura > inimigo->posicao_x + movendo_mundo) && (p->posicao_y < inimigo->posicao_y + inimigo->altura) && (p->posicao_y + p->altura > inimigo->posicao_y);
+    // Se ele estiver no sentido esquerda para direita, muda largura para negativo:
+    int p_largura_abs;
+    if (p->largura < 0)
+        p_largura_abs = -p->largura;
+    else
+        p_largura_abs = p->largura;
+
+    // Definindo a posição X real do personagem:
+    float p_x_efetivo;
+    if (p->largura < 0)
+        p_x_efetivo = p->posicao_x + p->largura;
+    else
+        p_x_efetivo = p->posicao_x;
+
+
+    bool colidiu = (p_x_efetivo < inimigo->posicao_x + (-inimigo->largura) + movendo_mundo) && (p_x_efetivo + p_largura_abs > inimigo->posicao_x + movendo_mundo) && (p->posicao_y < inimigo->posicao_y + inimigo->altura) && (p->posicao_y + p->altura > inimigo->posicao_y);
+    
     if (colidiu) {
         if (*count_vida > 0) {
             (*count_vida)--;
-            *invencibilidade_frames = 30; // Ativa invencibilidade
+            *invencibilidade_frames = 30;
         }
         *morte_inimigo_2 = true;
         return *count_vida;

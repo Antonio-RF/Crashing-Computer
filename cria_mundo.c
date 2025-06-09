@@ -69,6 +69,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	ALLEGRO_BITMAP *sprite_coracao_preto2 = al_load_bitmap("Sprites/coração_preto.png");
 	ALLEGRO_BITMAP *sprite_coracao_preto3 = al_load_bitmap("Sprites/coração_preto.png");
 
+	//criando portal de final:
+	ALLEGRO_BITMAP *sprite_portal = al_load_bitmap("Sprites/portal.png");
+
 
 
 	//criando variáveis booleanas para andar:
@@ -131,7 +134,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	int recebe5 = -1;
 	int recebe6 = -1;
 	int recebe7 = -1;
-	int invencibilidade_frames = 0; // Contador de frames de invencibilidade
+	int invencibilidade_frames = 0;
+
+	//criando variáveis para controle do game-over:
+	bool acabou_mundo = false;
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
 //LOOP PRINCIPAL:
 	bool controle = true;
@@ -140,7 +146,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 		al_wait_for_event(queue, &event);
 
 		//Evento de pressionar tecla:
-		if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
+		if (event.type == ALLEGRO_EVENT_KEY_DOWN && !acabou_mundo) {
 			switch(event.keyboard.keycode) {
 				case ALLEGRO_KEY_RIGHT:
 					p->frame_atual = 1;
@@ -193,7 +199,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			}
 		}
 		//Evento de soltar tecla:
-		if (event.type == ALLEGRO_EVENT_KEY_UP) {
+		if (event.type == ALLEGRO_EVENT_KEY_UP && !acabou_mundo) {
 			switch(event.keyboard.keycode) {
 				case ALLEGRO_KEY_RIGHT:
 					p->frame_atual = 0;
@@ -256,10 +262,12 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			}
 
 			//Colando variável que representa minha kilometragem:
-			//char texto_posicao[50];
-			//sprintf(texto_posicao, "KM: %.0f", -movendo_mundo);
-			//al_draw_text(font, al_map_rgb(255, 255, 0), 150, 20, ALLEGRO_ALIGN_CENTER, texto_posicao);
+			char texto_posicao[50];
+			sprintf(texto_posicao, "M: %.0f", -movendo_mundo);
+			al_draw_text(font, al_map_rgb(255, 255, 0), 950, 20, ALLEGRO_ALIGN_CENTER, texto_posicao);
 
+			//colocando portal:
+			al_draw_scaled_bitmap(sprite_portal, 0,0,1024,1024, 12200+movendo_mundo, 340, 256, 256, 0);	
 
 			//Colocando personagem:
 			coloca_personagem(p);
@@ -445,31 +453,46 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			if ((recebe == 0 && coracao3) || (recebe2 == 0 && coracao3) || (recebe3 == 0 && coracao3) || (recebe4 == 0 && coracao3) || (recebe5 == 0 && coracao3) || (recebe6 == 0 && coracao3) || (recebe7 == 0 && coracao3)) 
 				coracao3 = false;
 			
-			//condição de parada do meu jogo:
-			if (-movendo_mundo > 11850 || (coracao1 == false && coracao2 == false && coracao3 == false))
-				break;
-			
 			// Atualiza a tela:
             al_flip_display();
+
+			//condição de parada do meu jogo:
+			if (-movendo_mundo > 11850 || (coracao1 == false && coracao2 == false && coracao3 == false)) {
+				acabou_mundo = true;
+				break;
+			}
         }																																																				//Indica o evento correspondente no controle do segundo jogador (botão de movimentação para baixo) (!)
         else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
 			controle = false;
     }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------//
-
-	destroi_personagem(p);
-	destroi_arma(a);
-	destroi_projetil(pjt);
-	destroi_inimigo(inimigo1);
-	destroi_inimigo(inimigo2);
-	destroi_inimigo(inimigo3);
-	destroi_inimigo(inimigo4);
-	destroi_inimigo(inimigo5);
-	destroi_inimigo(inimigo6);
-	destroi_inimigo(inimigo7);
-	destroi_inimigo_bird(inimigo_bird);
-	destroi_inimigo_bird(inimigo_bird2);
-	al_destroy_bitmap(sprite_coracao1);
+	
+	if (p)
+		destroi_personagem(p);
+	if (a)
+		destroi_arma(a);
+	if(pjt)
+		destroi_projetil(pjt);
+	if (inimigo1)
+		destroi_inimigo(inimigo1);
+	if (inimigo2)
+		destroi_inimigo(inimigo2);
+	if (inimigo3)
+		destroi_inimigo(inimigo3);
+	if (inimigo4)
+		destroi_inimigo(inimigo4);
+	if (inimigo5)
+		destroi_inimigo(inimigo5);
+	if (inimigo6)
+		destroi_inimigo(inimigo6);
+	if (inimigo7)
+		destroi_inimigo(inimigo7);
+	if (inimigo_bird)
+		destroi_inimigo_bird(inimigo_bird);
+	if (inimigo_bird2)
+		destroi_inimigo_bird(inimigo_bird2);
+	if (sprite_coracao1)
+		al_destroy_bitmap(sprite_coracao1);
 	al_destroy_timer(timer);														//Destrutor do relógio
 	al_destroy_event_queue(queue);													//Destrutor da fila
 	al_destroy_bitmap(background_jogo);
