@@ -46,14 +46,13 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	struct arma *a = cria_arma(-64, 64, 570, 500, 1);
 
 	//criando projetil:
-	//struct projetil *pjt = cria_projetil(64, 64, 500, 500, 14);
-	struct projetil *pjt = cria_projetil(64, 64, 500, p->posicao_y+160, 14);
+	struct projetil_personagem *pjt = cria_projetil_personagem(64, 64, 500, p->posicao_y+160, 14);
 
 	//criando inimigos:
-	struct inimigo *inimigo1 = cria_inimigo(171, 126, 6000, 480, 1);
 	struct inimigo *inimigo2 = cria_inimigo(-160, 128, 4000, 460, 2);
-	//testando hit de inimigo3:
-	struct inimigo *inimigo3 = cria_inimigo(-432, 342, 3000, 250, 3);
+	//inimigos lobos:
+	struct inimigo *inimigo3 = cria_inimigo(-432, 342, 11400, 250, 3);
+	struct inimigo *inimigo8 = cria_inimigo(-432, 342, 5000, 250, 3);
 
 	struct inimigo *inimigo4 = cria_inimigo(-160, 128, 7000, 460, 2);
 	struct inimigo *inimigo5 = cria_inimigo(-160, 128, 9000, 460, 2);
@@ -61,13 +60,16 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	struct inimigo *inimigo7 = cria_inimigo(-160, 128, 11200, 460, 2);
 	struct inimigo_bird *inimigo_bird = cria_inimigo_bird(128, 128, 1000, 100);
 	struct inimigo_bird *inimigo_bird2 = cria_inimigo_bird(128, 128, 10000, 100);
+	struct inimigo_bird *inimigo_bird3 = cria_inimigo_bird(128, 128, 6000, 100);
 
 	//criando projetil dos birds:
 	struct projetil *pjt_bird = cria_projetil(64, 64, 1000, 100, 14);
 	struct projetil *pjt_bird2 = cria_projetil(64, 64, 10000, 100, 14);
+	struct projetil *pjt_bird3 = cria_projetil(64, 64, 6000, 100, 14);
 
 	//criando projeteis dos inimigos lobos:
-	struct projetil *pjt_lobo = cria_projetil(64, 64, 3000, 250, 40);
+	struct projetil *pjt_lobo = cria_projetil(64, 64, 11400, 250, 15);
+	struct projetil *pjt_lobo2 = cria_projetil(64, 64, 5000, 250, 15);
 
 	//criando os corações que servirão de vida:
 	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");
@@ -79,8 +81,6 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 
 	//criando portal de final:
 	ALLEGRO_BITMAP *sprite_portal = al_load_bitmap("Sprites/portal.png");
-
-
 
 	//criando variáveis booleanas para andar:
 	bool andando_direita = false;
@@ -102,8 +102,6 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	int salva_pjt_y = pjt->posicao_y;
 
 	//criando variáveis para ajudar no impacto:
-	int pos_inimigo1 = inimigo1->posicao_x;
-	bool morte_inimigo_1 = false;
 	int pos_inimigo2 = inimigo2->posicao_x;
 	bool morte_inimigo_2 = false;
 	int pos_inimigo3 = inimigo3->posicao_x;
@@ -120,18 +118,27 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	bool morte_inimigo_bird = false;
 	int pos_inimigo_bird2 = inimigo_bird2->posicao_x;
 	bool morte_inimigo_bird2 = false;
+	int pos_inimigo_bird3 = inimigo_bird3->posicao_x;
+	bool morte_inimigo_bird3 = false;
+	int pos_inimigo8 = inimigo8->posicao_x;
+	bool morte_inimigo_8 = false;
 
 	//criando variáveis para o inimigo_bird:
 	int count_frames_bird = 0;
 	int count_frames_bird2 = 0;
+	int count_frames_bird3 = 0;
 	int count_projetil_bird = 0;
 	int salva_arg2_bird = pjt_bird->posicao_y+40;
 	bool controle_destroi_projetil_bird = false;
 	int salva_arg2_bird2 = pjt_bird2->posicao_y+40;
 	bool controle_destroi_projetil_bird2 = false;
+	int salva_arg2_bird3 = pjt_bird2->posicao_y+40;
+	bool controle_destroi_projetil_bird3 = false;
 
 	//criando variáveis para o inimigo_lobo:
 	int salva_arg3_lobo = pjt_lobo->posicao_x;
+	int salva_arg3_lobo2 = pjt_lobo2->posicao_x;
+	bool baixo_pressionado = false;
 
 	//cirando variáveis para a vida do personagem:
 	int count_vidas = 3;
@@ -145,6 +152,9 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	int recebe5 = -1;
 	int recebe6 = -1;
 	int recebe7 = -1;
+	int recebe8 = -1;
+	int recebelobo = -1;
+	int recebelobo2 = -1;
 	int invencibilidade_frames = 0;
 
 	//criando variáveis para controle do game-over:
@@ -183,6 +193,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				case ALLEGRO_KEY_DOWN:
 					p->frame_atual = 3;
 					a->chave = 0;
+					baixo_pressionado = true;
 					break;
 				case ALLEGRO_KEY_UP:
 					if (!no_ar) {
@@ -235,6 +246,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				case ALLEGRO_KEY_DOWN:
 					p->frame_atual = 0;
 					a->chave = 1;
+					baixo_pressionado = false;
 					break;
 				case ALLEGRO_KEY_UP:
 					p->frame_atual = 0;
@@ -310,15 +322,13 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				}
 			}
 			
-			//Colocando inimigo1:
-			if (!morte_inimigo_1)
-				coloca_inimigo(inimigo1, movendo_mundo, 1);
+
 			//Colocando inimigo2:
 			if (!morte_inimigo_2) {
 				coloca_inimigo(inimigo2, movendo_mundo, 2);
 				inimigo2->posicao_x -= 7;
 			}
-			//Colocando inimigo3:
+			//Colocando inimigo3 (lobo):
 			if (!morte_inimigo_3) {
 				coloca_inimigo(inimigo3, movendo_mundo, 3);
 			}
@@ -356,6 +366,17 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				if (count_frames_bird2 == 64)
 					count_frames_bird2 = 0;
 			}
+			//Colocando inimigo_bird3:
+			if (!morte_inimigo_bird3) {
+				coloca_inimigo_bird(inimigo_bird3, count_frames_bird3, movendo_mundo);
+				count_frames_bird3++;
+				if (count_frames_bird3 == 64)
+					count_frames_bird3 = 0;
+			}
+			//Colocando inimigo8 (lobo):
+			if (!morte_inimigo_8) {
+				coloca_inimigo(inimigo8, movendo_mundo, 3);
+			}
 
 
 			//Colocando disparo:
@@ -390,14 +411,12 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				}
 
 
-				coloca_projetil(pjt);
+				coloca_projetil_personagem(pjt);
 
-				//impacto inimigo 1:
-				colisao_inimigo(&morte_inimigo_1, pjt, inimigo1, movendo_mundo, 0);
 				//impacto inimigo 2:
 				colisao_inimigo(&morte_inimigo_2, pjt, inimigo2, movendo_mundo, 1);
 				//impacto inimigo 3:
-				colisao_inimigo(&morte_inimigo_3, pjt, inimigo3, movendo_mundo, 1);
+				colisao_inimigo(&morte_inimigo_3, pjt, inimigo3, movendo_mundo, 2);
 				//impacto inimigo 4:
 				colisao_inimigo(&morte_inimigo_4, pjt, inimigo4, movendo_mundo, 1);
 				//impacto inimigo 5:
@@ -410,6 +429,10 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				colisao_inimigo_bird(&morte_inimigo_bird, pjt, inimigo_bird, movendo_mundo);
 				//impacto inimigo bird2:
 				colisao_inimigo_bird(&morte_inimigo_bird2, pjt, inimigo_bird2, movendo_mundo);
+				//impacto inimigo bird3:
+				colisao_inimigo_bird(&morte_inimigo_bird3, pjt, inimigo_bird3, movendo_mundo);
+				//impacto inimigo 8:
+				colisao_inimigo(&morte_inimigo_8, pjt, inimigo8, movendo_mundo, 2);
 
 				if ((pjt->velocidade >= 100 || pjt->velocidade <= -72)) {
 					atirando = false;
@@ -435,11 +458,22 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				destroi_projetil(pjt_bird2);
 				controle_destroi_projetil_bird2 = true;
 			}
+			if (!morte_inimigo_bird3) {
+				atira_bird(pjt_bird3, movendo_mundo, salva_arg2_bird3);
+			}
+			if (morte_inimigo_bird3 && !controle_destroi_projetil_bird3) {
+				destroi_projetil(pjt_bird3);
+				controle_destroi_projetil_bird3 = true;
+			}
 
 			//colocando projeteis dos lobos:
 			if (!morte_inimigo_3) {
 				atira_lobo(pjt_lobo, movendo_mundo, salva_arg3_lobo);
 			}
+			if (!morte_inimigo_8) {
+				atira_lobo(pjt_lobo2, movendo_mundo, salva_arg3_lobo2);
+			}
+
 
 
 			//Colocando corações:
@@ -459,6 +493,11 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			//Colisão entre personagem e pássaros:
 			recebe = colisao_personagem_com_bird(&count_vidas, pjt_bird, p, movendo_mundo);
 			recebe2 = colisao_personagem_com_bird(&count_vidas, pjt_bird2, p, movendo_mundo);
+			recebe8 = colisao_personagem_com_bird(&count_vidas, pjt_bird3, p, movendo_mundo);
+
+			//Colisão entre personagem e lobo:
+			recebelobo = colisao_personagem_com_lobo(baixo_pressionado, &count_vidas, pjt_lobo, p, movendo_mundo);
+			recebelobo2 = colisao_personagem_com_lobo(baixo_pressionado, &count_vidas, pjt_lobo2, p, movendo_mundo);
 
 			if (invencibilidade_frames > 0)
     			invencibilidade_frames--;
@@ -474,11 +513,11 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				if (inimigo7 != NULL && !morte_inimigo_7)
 					recebe7 = colisao_personagem_com_inimigo2(&count_vidas, inimigo7, p, movendo_mundo, &morte_inimigo_7, &invencibilidade_frames);
 			}
-			if ((recebe == 2 && coracao1) || (recebe2 == 2 && coracao1) || (recebe3 == 2 && coracao1) || (recebe4 == 2 && coracao1) || (recebe5 == 2 && coracao1) || (recebe6 == 2 && coracao1) || (recebe7 == 2 && coracao1))
+			if ((recebelobo == 2 && coracao1) || (recebelobo2 == 2 && coracao1) || (recebe == 2 && coracao1) || (recebe2 == 2 && coracao1) || (recebe3 == 2 && coracao1) || (recebe4 == 2 && coracao1) || (recebe5 == 2 && coracao1) || (recebe6 == 2 && coracao1) || (recebe7 == 2 && coracao1) || (recebe8 == 2 && coracao1))
 				coracao1 = false;
-			if ((recebe == 1 && coracao2) || (recebe2 == 1 && coracao2) || (recebe3 == 1 && coracao2) || (recebe4 == 1 && coracao2) || (recebe5 == 1 && coracao2) || (recebe6 == 1 && coracao2) || (recebe7 == 1 && coracao2))
+			if ((recebelobo == 1 && coracao2) || (recebelobo2 == 1 && coracao2) ||(recebe == 1 && coracao2) || (recebe2 == 1 && coracao2) || (recebe3 == 1 && coracao2) || (recebe4 == 1 && coracao2) || (recebe5 == 1 && coracao2) || (recebe6 == 1 && coracao2) || (recebe7 == 1 && coracao2) || (recebe8 == 1 && coracao2))
 				coracao2 = false;
-			if ((recebe == 0 && coracao3) || (recebe2 == 0 && coracao3) || (recebe3 == 0 && coracao3) || (recebe4 == 0 && coracao3) || (recebe5 == 0 && coracao3) || (recebe6 == 0 && coracao3) || (recebe7 == 0 && coracao3)) 
+			if ((recebelobo ==0 && coracao3) || (recebelobo2 == 0 && coracao3) || (recebe == 0 && coracao3) || (recebe2 == 0 && coracao3) || (recebe3 == 0 && coracao3) || (recebe4 == 0 && coracao3) || (recebe5 == 0 && coracao3) || (recebe6 == 0 && coracao3) || (recebe7 == 0 && coracao3) || (recebe8 == 0 && coracao3)) 
 				coracao3 = false;
 			
 			// Atualiza a tela:
@@ -501,9 +540,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	if (a)
 		destroi_arma(a);
 	if(pjt)
-		destroi_projetil(pjt);
-	if (inimigo1)
-		destroi_inimigo(inimigo1);
+		destroi_projetil_personagem(pjt);
 	if (inimigo2)
 		destroi_inimigo(inimigo2);
 	if (inimigo3)
