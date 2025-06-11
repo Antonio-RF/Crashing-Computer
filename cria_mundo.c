@@ -2,6 +2,7 @@
 #include "entidades.h"
 #include "tela_game_over.h"
 #include "tela_pause.h"
+#include "theboss.h"
 #include <stdio.h>
 
 #include <allegro5/allegro_primitives.h>
@@ -38,7 +39,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	//Carregando a imagem e salvando ela como "background":
 	ALLEGRO_BITMAP* background_jogo = al_load_bitmap("Pictures/bulkhead-wallsx3.png"); 
 	ALLEGRO_BITMAP* background_jogo2 = al_load_bitmap("Pictures/lava-background-preview.png");
-
+	
 	//criando o meu personagem:
 	struct personagem *p = cria_personagem(160, 240, 400, 340);
 
@@ -264,12 +265,15 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
         //Evento que captura eventos da fila, inserindo os mesmos na variável de eventos:
         if (event.type == ALLEGRO_EVENT_TIMER){
 			//limpando a tela:
-			al_clear_to_color(al_map_rgb(0, 0, 0));		
+			al_clear_to_color(al_map_rgb(0, 0, 0));	
+
+			//chamando a função theboss só para testar, depois vou chamar lá embaixo:
+			tela_the_boss(disp);	
 
 			//Movimentando mundo:
 			if (andando_direita)
 				movendo_mundo -= 14;
-			if (andando_esquerda)
+			if (andando_esquerda && (-movendo_mundo > 0))
 				movendo_mundo += 14;
 
 			//Aplicando a "gravidade" se o personagem estiver no ar:
