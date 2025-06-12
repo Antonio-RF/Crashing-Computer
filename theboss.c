@@ -5,6 +5,8 @@
 #include <allegro5/allegro_font.h>													
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_ttf.h> 													
+#include <allegro5/bitmap.h>
+#include <allegro5/bitmap_io.h>
 #include <allegro5/events.h>
 #include <allegro5/keycodes.h>
 #include <stdbool.h>
@@ -24,7 +26,7 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	ALLEGRO_FONT* font2 = al_load_ttf_font("Pictures/minha_fonte.ttf", 50, 0);
 
     //background:
-    ALLEGRO_BITMAP* background_jogo3 = al_load_bitmap("Pictures/background3.png");	
+    ALLEGRO_BITMAP* background_jogo3 = al_load_bitmap("Pictures/background3.png");
 
     //criando o meu personagem:
 	struct personagem *p = cria_personagem(160, 240, 400, 440);
@@ -34,6 +36,22 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 
 	//criando arma:
 	struct arma *a = cria_arma(-64, 64, 570, p->posicao_y+160, 1);
+
+	//criando boss:
+	struct inimigo_boss *boss = cria_inimigo_boss(512, 352, 400, -10);
+
+	//criando os corações que servirão de vida do personagem:
+	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");
+	ALLEGRO_BITMAP *sprite_coracao2 = al_load_bitmap("Sprites/coração.png");
+	ALLEGRO_BITMAP *sprite_coracao3 = al_load_bitmap("Sprites/coração.png");
+	ALLEGRO_BITMAP *sprite_coracao_preto1 = al_load_bitmap("Sprites/coração_preto.png");
+	ALLEGRO_BITMAP *sprite_coracao_preto2 = al_load_bitmap("Sprites/coração_preto.png");
+	ALLEGRO_BITMAP *sprite_coracao_preto3 = al_load_bitmap("Sprites/coração_preto.png");
+
+	//criando as barras de vida do inimigo boss:
+	ALLEGRO_BITMAP *sprite_barra_coracao_boss = al_load_bitmap("Sprites/barra_coração_boss.png");
+	ALLEGRO_BITMAP *sprite_barra_preta = al_load_bitmap("Sprites/barra_preta.png");
+
 
 	//criando variáveis booleanas para andar:
 	bool andando_direita = false;
@@ -53,6 +71,17 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	bool controle2 = false;
 	int salva_pjt_y = pjt->posicao_y;
 	bool atirando_nao_andar_tiro = true;
+
+	//criando variáveis para o boss:
+	bool morte_inimigo_boss = false;
+	int count_frames_boss = 0;
+
+	//cirando variáveis para a vida do personagem:
+	int count_vidas = 3;
+	bool coracao1 = true;
+	bool coracao2 = true;
+	bool coracao3 = true;
+	bool coracao_boss = true;
 
 	bool controle = true;
     while(controle){																		
@@ -154,6 +183,14 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
             //colocando meu personagem:
             coloca_personagem(p);
 
+			//colocando the boss:
+			if (!morte_inimigo_boss) {
+				coloca_inimigo_boss(boss, count_frames_boss);
+				count_frames_boss += 5;
+				if (count_frames_boss >= 215)
+					count_frames_boss = 0;
+			}
+
 			//Movimentando mundo:
 			if (andando_direita && p->posicao_x < 910)
 				p->posicao_x += 14;
@@ -244,6 +281,25 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 				}
 			}
 
+			//Colocando corações:
+			if (coracao1)
+				al_draw_scaled_bitmap(sprite_coracao1, 0,0,1024,1024, 20, 0, 80, 80, 0);
+			else
+				al_draw_scaled_bitmap(sprite_coracao_preto1, 0,0,1024,1024, 20, 0, 80, 80, 0);
+			if (coracao2)
+				al_draw_scaled_bitmap(sprite_coracao2, 0,0,1024,1024, 100, 0, 80, 80, 0);
+			else 
+				al_draw_scaled_bitmap(sprite_coracao_preto2, 0,0,1024,1024, 100, 0, 80, 80, 0);
+			if (coracao3)
+				al_draw_scaled_bitmap(sprite_coracao3, 0,0,1024,1024, 180, 0, 80, 80, 0);
+			else 
+				al_draw_scaled_bitmap(sprite_coracao_preto3, 0,0,1024,1024, 180, 0, 80, 80, 0);
+			
+			//Colocando corações do boss:
+			if (sprite_barra_coracao_boss)
+				al_draw_scaled_bitmap(sprite_barra_coracao_boss, 0,0,500,500, 740, -130, 350, 350, 0);
+
+			al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 840, -10, 50, 70, 0);
     		
 			al_flip_display();														
 		}

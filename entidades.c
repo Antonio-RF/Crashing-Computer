@@ -257,7 +257,7 @@ void colisao_inimigo(bool *morte_inimigo, struct projetil_personagem *pjt, struc
 
 struct inimigo_bird *cria_inimigo_bird(int largura, int altura, int posicao_x, int posicao_y) {
     
-    struct inimigo_bird *ib = malloc(sizeof(struct personagem));
+    struct inimigo_bird *ib = malloc(sizeof(struct inimigo_bird));
     if (!ib)
         return NULL; 
     
@@ -461,4 +461,58 @@ int colisao_personagem_com_lobo(bool baixo_pressionado, int *count_vida, struct 
         }
     }
     return -1; // Retorna -1 quando não há colisão ou quando o personagem já está sem vida
+}
+
+struct inimigo_boss *cria_inimigo_boss(int largura, int altura, int posicao_x, int posicao_y) {
+    
+    struct inimigo_boss *boss = malloc(sizeof(struct inimigo_boss));
+    if (!boss)
+        return NULL; 
+    
+    boss->altura = altura;
+    boss->largura = largura;
+    boss->frame_atual = 0;
+    boss->posicao_x = posicao_x;
+    boss->posicao_y = posicao_y;
+
+    boss->sprites[0] = al_load_bitmap("Sprites/theboss1.png");
+    boss->sprites[1] = al_load_bitmap("Sprites/theboss2.png");
+    boss->sprites[2] = al_load_bitmap("Sprites/theboss3.png");
+    boss->sprites[3] = al_load_bitmap("Sprites/theboss4.png");
+    boss->sprites[4] = al_load_bitmap("Sprites/theboss5.png");
+    boss->sprites[5] = al_load_bitmap("Sprites/theboss6.png");
+
+    //Loop para se não existir alguma dessas imagens, encerrar o programa:
+    for (int i = 0; i < 6; i++) {
+        if (!boss->sprites[i]) {
+            printf("Erro ao carregar sprite %d\n", i);
+            for (int j = 0; j <= i; j++) {
+                if (boss->sprites[j])
+                    al_destroy_bitmap(boss->sprites[j]);
+            }
+            free(boss);
+            return NULL;
+        }
+    }
+
+    return boss;
+}
+
+void destroi_inimigo_boss(struct inimigo_boss *boss) {
+    if (boss) {
+        for (int i = 0; i < 5; i++) {
+            if (boss->sprites[i])
+                al_destroy_bitmap(boss->sprites[i]);
+        }
+        free(boss);
+    }
+}
+
+void coloca_inimigo_boss(struct inimigo_boss *boss, int frame_atual) {
+    boss->frame_atual = frame_atual;
+    int temp;
+    temp = frame_atual / 36;
+    if (temp >= 6)
+        temp = 5;
+    al_draw_scaled_bitmap(boss->sprites[temp], 0, 0, 256, 176, boss->posicao_x, boss->posicao_y,boss->largura, boss->altura, 0);
 }

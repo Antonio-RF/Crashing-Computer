@@ -141,4 +141,19 @@ void atira_lobo(struct projetil *pjt_bird, float movendo_mundo, int salva);
 
 int colisao_personagem_com_lobo(bool baixo_pressionado, int *count_vida, struct projetil *pjt, struct personagem *p, float movendo_mundo);
 
+struct inimigo_boss {
+    ALLEGRO_BITMAP *sprites[6];
+    int largura;
+    int altura;
+    int frame_atual;
+    float posicao_x;
+    float posicao_y;
+};
+
+struct inimigo_boss *cria_inimigo_boss(int largura, int altura, int posicao_x, int posicao_y);
+
+void destroi_inimigo_boss(struct inimigo_boss *boss);
+
+void coloca_inimigo_boss(struct inimigo_boss *boss, int frame_atual);
+
 #endif
