@@ -75,6 +75,22 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	//criando variáveis para o boss:
 	bool morte_inimigo_boss = false;
 	int count_frames_boss = 0;
+	bool vida1 = true;
+	bool vida2 = true;
+	bool vida3 = true;
+	bool vida4 = true;
+	bool vida5 = true;
+	bool vida6 = true;
+	bool vida7 = true;
+	bool vida8 = true;
+	bool vida9 = true;
+	bool vida10 = true;
+	bool vida11 = true;
+	bool vida12 = true;
+	bool vida13 = true;
+	bool sentido_positivo_boss = false;
+	int salva_pos_sentido_boss = 0;
+
 
 	//cirando variáveis para a vida do personagem:
 	int count_vidas = 3;
@@ -189,6 +205,23 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 				count_frames_boss += 5;
 				if (count_frames_boss >= 215)
 					count_frames_boss = 0;
+				
+				if (!sentido_positivo_boss) {
+					boss->posicao_x -= 4;
+					if (boss->posicao_x < -180) {
+						boss->largura *= -1;
+						sentido_positivo_boss = true;
+						boss->posicao_x += 600;
+					}
+				}
+				if (sentido_positivo_boss) {
+					boss->posicao_x += 4;
+					if (boss->posicao_x > 1250) {
+						boss->largura *= -1;
+						sentido_positivo_boss = false;
+						boss->posicao_x -= 600;
+					}
+				}
 			}
 
 			//Movimentando mundo:
@@ -298,8 +331,34 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 			//Colocando corações do boss:
 			if (sprite_barra_coracao_boss)
 				al_draw_scaled_bitmap(sprite_barra_coracao_boss, 0,0,500,500, 740, -130, 350, 350, 0);
-
-			al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 840, -10, 50, 70, 0);
+			
+			//vidas perdidas do inimigo boss:
+			//if (!vida1)
+			al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 1020, 15, 40, 65, 0);
+			if (!vida2)
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 1000, 15, 40, 65, 0);
+			if (!vida3)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 980, 15, 40, 65, 0);
+			if (!vida4)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 958, 15, 40, 65, 0);
+			if (!vida5)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 938, 15, 40, 65, 0);
+			if (!vida6)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 915, 15, 40, 65, 0);
+			if (!vida7)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 895, 15, 40, 65, 0);
+			if (!vida8)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 875, 15, 40, 65, 0);
+			if (!vida9)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 853, 15, 40, 65, 0);
+			if (!vida10)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 833, 15, 40, 65, 0);
+			if (!vida11)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 813, 15, 40, 65, 0);
+			if (!vida12)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 790, 15, 40, 65, 0);
+			if (!vida13)	
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 770, 15, 40, 65, 0);
     		
 			al_flip_display();														
 		}
