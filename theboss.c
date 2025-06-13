@@ -1,5 +1,6 @@
 #include "theboss.h"
 #include "entidades.h"
+#include "secundarias.h"
 #include "tela_pause.h"
 #include <allegro5/allegro5.h>														
 #include <allegro5/allegro_font.h>													
@@ -90,6 +91,8 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	bool vida13 = true;
 	bool sentido_positivo_boss = false;
 	int salva_pos_sentido_boss = 0;
+	int count_vidas_boss = 14;
+	int recebe_boss;
 
 
 	//cirando variáveis para a vida do personagem:
@@ -150,6 +153,7 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 							pjt->posicao_x = 210;
 
 						pjt->velocidade = 14;
+						pjt->ativo = true;
 					}
 					break;
 				case ALLEGRO_KEY_ESCAPE:
@@ -299,7 +303,6 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 						pjt->posicao_y += pjt->velocidade;
 				}
 
-
 				coloca_projetil_personagem(pjt);
 
 				//impacto inimigo boss:
@@ -332,9 +335,55 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 			if (sprite_barra_coracao_boss)
 				al_draw_scaled_bitmap(sprite_barra_coracao_boss, 0,0,500,500, 740, -130, 350, 350, 0);
 			
+			//Colisão com boss:
+			recebe_boss = colisao_inimigo_boss(pjt, boss, &count_vidas_boss, sentido_positivo_boss);
+			if (recebe_boss != -1) {
+				switch (recebe_boss) {
+					case 13:
+						vida1 = false;
+						break;
+					case 12:
+						vida2 = false;
+						break;
+					case 11:
+						vida3 = false;
+						break;
+					case 10:
+						vida4 = false;
+						break;
+					case 9:
+						vida5 = false;
+						break;
+					case 8:
+						vida6 = false;
+						break;
+					case 7:
+						vida7 = false;
+						break;
+					case 6:
+						vida8 = false;
+						break;
+					case 5:
+						vida9 = false;
+						break;
+					case 4:
+						vida10 = false;
+						break;
+					case 3:
+						vida11 = false;
+						break;
+					case 2:
+						vida12 = false;
+						break;
+					case 1:
+						vida13 = false;
+						break;
+				}
+			}
+
 			//vidas perdidas do inimigo boss:
-			//if (!vida1)
-			al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 1020, 15, 40, 65, 0);
+			if (!vida1)
+				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 1020, 15, 40, 65, 0);
 			if (!vida2)
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 1000, 15, 40, 65, 0);
 			if (!vida3)	
@@ -353,12 +402,14 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 853, 15, 40, 65, 0);
 			if (!vida10)	
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 833, 15, 40, 65, 0);
-			if (!vida11)	
+			if (!vida11)
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 813, 15, 40, 65, 0);
-			if (!vida12)	
+			if (!vida12) 
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 790, 15, 40, 65, 0);
-			if (!vida13)	
+			if (!vida13) {
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 770, 15, 40, 65, 0);
+				morte_inimigo_boss = true;
+			}
     		
 			al_flip_display();														
 		}

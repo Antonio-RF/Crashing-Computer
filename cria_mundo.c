@@ -3,6 +3,7 @@
 #include "tela_game_over.h"
 #include "tela_pause.h"
 #include "theboss.h"
+#include "secundarias.h"
 #include <stdio.h>
 
 #include <allegro5/allegro_primitives.h>

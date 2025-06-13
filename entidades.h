@@ -67,6 +67,7 @@ struct projetil_personagem {
     int posicao_x;
     int posicao_y;
     int velocidade;
+    bool ativo;
 };
 
 struct projetil_personagem *cria_projetil_personagem(int largura, int altura, int posicao_x, int posicao_y, int velocidade);
@@ -108,8 +109,6 @@ void destroi_explosao(struct explosao *e);
 
 void coloca_explosao(struct explosao *e);
 
-void colisao_inimigo(bool *morte_inimigo, struct projetil_personagem *pjt, struct inimigo *i, float movendo_mundo, int controle);
-
 struct inimigo_bird {
     ALLEGRO_BITMAP *sprites[5];
     int largura;
@@ -125,21 +124,9 @@ void destroi_inimigo_bird(struct inimigo_bird *ib);
 
 void coloca_inimigo_bird(struct inimigo_bird *ib, int frame_atual, float movendo_mundo);
 
-void colisao_inimigo_bird(bool *morte_inimigo, struct projetil_personagem *pjt, struct inimigo_bird *i, float movendo_mundo);
-
 void coloca_projetil_bird(struct projetil *pjt, float movendo_mundo, int adicao_y);
 
-void atira_bird(struct projetil *pjt_bird, float movendo_mundo, int salva);
-
-int colisao_personagem_com_bird(int *count_vida, struct projetil *pjt, struct personagem *p, float movendo_mundo);
-
-int colisao_personagem_com_inimigo2(int *count_vida, struct inimigo *inimigo, struct personagem *p, float movendo_mundo, bool *morte_inimigo_2, int *invencibilidade_frames);
-
 void coloca_projetil_lobo(struct projetil *pjt, float movendo_mundo);
-
-void atira_lobo(struct projetil *pjt_bird, float movendo_mundo, int salva);
-
-int colisao_personagem_com_lobo(bool baixo_pressionado, int *count_vida, struct projetil *pjt, struct personagem *p, float movendo_mundo);
 
 struct inimigo_boss {
     ALLEGRO_BITMAP *sprites[6];
