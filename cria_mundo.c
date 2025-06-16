@@ -65,13 +65,13 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 	struct inimigo_bird *inimigo_bird3 = cria_inimigo_bird(128, 128, 6000, 100);
 
 	//criando projetil dos birds:
-	struct projetil *pjt_bird = cria_projetil(64, 64, 1000, 100, 14);
-	struct projetil *pjt_bird2 = cria_projetil(64, 64, 10000, 100, 14);
-	struct projetil *pjt_bird3 = cria_projetil(64, 64, 6000, 100, 14);
+	struct projetil *pjt_bird = cria_projetil(64, 64, 1000, 100, 14, 0);
+	struct projetil *pjt_bird2 = cria_projetil(64, 64, 10000, 100, 14, 0);
+	struct projetil *pjt_bird3 = cria_projetil(64, 64, 6000, 100, 14, 0);
 
 	//criando projeteis dos inimigos lobos:
-	struct projetil *pjt_lobo = cria_projetil(64, 64, 11400, 250, 15);
-	struct projetil *pjt_lobo2 = cria_projetil(64, 64, 5000, 250, 15);
+	struct projetil *pjt_lobo = cria_projetil(64, 64, 11400, 250, 15, 0);
+	struct projetil *pjt_lobo2 = cria_projetil(64, 64, 5000, 250, 15, 0);
 
 	//criando os corações que servirão de vida:
 	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");

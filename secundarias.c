@@ -225,3 +225,70 @@ int colisao_inimigo_boss(struct projetil_personagem *pjt, struct inimigo_boss *i
     return -1;
 }
 
+void atira_boss(struct projetil *pjt_boss, int salva, struct inimigo_boss *boss, struct personagem *p) {
+    pjt_boss->velocidade += 4;
+    //pjt_boss->posicao_y += pjt_boss->velocidade;
+    pjt_boss->posicao_y += 15;
+
+    //variáveis para o projétil seguir o meu personagem:
+    int sentido_p = p->posicao_x;
+    if (pjt_boss->posicao_x > sentido_p)
+        pjt_boss->posicao_x += 400;
+    else
+        pjt_boss->posicao_x -= 400;
+
+    coloca_projetil_boss(pjt_boss, boss);
+    if (pjt_boss->velocidade >= 850) {
+        pjt_boss->posicao_y = salva;
+        pjt_boss->velocidade = 14;
+    }
+}
+
+void atira_boss2(struct projetil *pjt_boss, int salva, struct personagem *p, struct inimigo_boss *boss) {
+    pjt_boss->velocidade += 4;
+    pjt_boss->posicao_y += 20;
+
+    coloca_projetil_boss2(pjt_boss, boss);
+    if (pjt_boss->velocidade >= 850) {
+        pjt_boss->posicao_y = salva;
+        pjt_boss->velocidade = 14;
+    }
+}
+
+int colisao_personagem_com_boss(int *count_vida, struct projetil *pjt, struct personagem *p) {
+    // Ajustando a posição do projétil considerando o movimento do mundo e a posição do pjt_bird (+40 tanto no x quanto no y):
+    if (pjt == NULL || p == NULL)
+        return -1;
+    
+    // Se ele estiver no sentido esquerda para direita, muda largura para negativo:
+    int p_largura_abs;
+    if (p->largura < 0)
+        p_largura_abs = -p->largura;
+    else
+        p_largura_abs = p->largura;
+
+    // Definindo a posição X real do personagem:
+    float p_x_efetivo;
+    if (p->largura < 0)
+        p_x_efetivo = p->posicao_x + p->largura;
+    else
+        p_x_efetivo = p->posicao_x;
+
+    float proj_x = pjt->posicao_x + 40;
+    float proj_y = pjt->posicao_y + 40;
+    
+     bool colidiu = (proj_x < p_x_efetivo + p_largura_abs) && (proj_x + pjt->largura > p_x_efetivo) && (proj_y < p->posicao_y + p->altura) && (proj_y + pjt->altura > p->posicao_y);
+
+    if (colidiu && pjt->velocidade < 100) {
+        if (*count_vida > 0) {
+            (*count_vida)--;
+            
+            // "Destrói" o projétil
+            pjt->velocidade = 100;
+            
+            // Retorna o novo valor de vida
+            return *count_vida;
+        }
+    }
+    return -1; // Retorna -1 quando não há colisão ou quando o personagem já está sem vida
+}

@@ -94,7 +94,7 @@ void coloca_arma(struct arma *a) {
     al_draw_scaled_bitmap(a->sprite, 0,0,1024,1024, a->posicao_x, a->posicao_y, a->largura, a->altura, 0);
 }
 
-struct projetil *cria_projetil(int largura, int altura, int posicao_x, int posicao_y, int velocidade) {
+struct projetil *cria_projetil(int largura, int altura, int posicao_x, int posicao_y, int velocidade, int tipo) {
     struct projetil *pjt = malloc(sizeof(struct projetil));
     if (!pjt)
         return NULL;
@@ -105,7 +105,10 @@ struct projetil *cria_projetil(int largura, int altura, int posicao_x, int posic
     pjt->posicao_y = posicao_y;
     pjt->velocidade = velocidade;
 
-    pjt->sprite = al_load_bitmap("Sprites/hit_frame.png");
+    if (tipo == 0)
+        pjt->sprite = al_load_bitmap("Sprites/hit_frame.png");
+    if (tipo == 1)
+        pjt->sprite = al_load_bitmap("Sprites/hit_boss.png");
     if (!pjt->sprite) {
         printf("erro ao carregar sprite do hit\n");
         return NULL;
@@ -341,4 +344,18 @@ void coloca_inimigo_boss(struct inimigo_boss *boss, int frame_atual) {
     if (temp >= 6)
         temp = 5;
     al_draw_scaled_bitmap(boss->sprites[temp], 0, 0, 256, 176, boss->posicao_x, boss->posicao_y,boss->largura, boss->altura, 0);
+}
+
+void coloca_projetil_boss(struct projetil *pjt, struct inimigo_boss *boss) {
+    if (boss->largura > 0)
+        al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, boss->posicao_x+200, pjt->posicao_y+100, pjt->largura, pjt->altura, 0);
+    else
+        al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, boss->posicao_x-240, pjt->posicao_y+100, pjt->largura, pjt->altura, 0);
+}
+
+void coloca_projetil_boss2(struct projetil *pjt, struct inimigo_boss *boss) {
+    if (boss->largura > 0)
+        al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, pjt->posicao_x+100, pjt->posicao_y+120, pjt->largura, pjt->altura, 0);
+    else
+        al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, pjt->posicao_x, pjt->posicao_y+100, pjt->largura, pjt->altura, 0);
 }

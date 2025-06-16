@@ -23,7 +23,10 @@ int colisao_personagem_com_lobo(bool baixo_pressionado, int *count_vida, struct 
 
 int colisao_inimigo_boss(struct projetil_personagem *pjt, struct inimigo_boss *i, int *count_vidas_boss, bool sentido_positivo_boss);
 
+int colisao_personagem_com_boss(int *count_vida, struct projetil *pjt, struct personagem *p);
 
+void atira_boss(struct projetil *pjt_boss, int salva, struct inimigo_boss *boss, struct personagem *p);
 
+void atira_boss2(struct projetil *pjt_boss, int salva, struct personagem *p, struct inimigo_boss *boss);
 
 #endif

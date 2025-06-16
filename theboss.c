@@ -39,7 +39,12 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	struct arma *a = cria_arma(-64, 64, 570, p->posicao_y+160, 1);
 
 	//criando boss:
-	struct inimigo_boss *boss = cria_inimigo_boss(512, 352, 400, -10);
+	struct inimigo_boss *boss = cria_inimigo_boss(768, 528, 400, -150);
+
+	//criando projétil para boss:
+	struct projetil *pjt_boss = cria_projetil(128, 128, boss->posicao_x, boss->posicao_y, 14, 1);
+	struct projetil *pjt_boss2 = cria_projetil(128, 128, boss->posicao_x, boss->posicao_y, 14, 1);
+	struct projetil *pjt_boss3 = cria_projetil(128, 128, boss->posicao_x, boss->posicao_y, 14, 1);
 
 	//criando os corações que servirão de vida do personagem:
 	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");
@@ -93,6 +98,9 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	int salva_pos_sentido_boss = 0;
 	int count_vidas_boss = 14;
 	int recebe_boss;
+	int salva = pjt_boss->posicao_y;
+	int salva2 = pjt_boss2->posicao_y;
+	int salva3 = pjt_boss3->posicao_y;
 
 
 	//cirando variáveis para a vida do personagem:
@@ -410,6 +418,14 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 				al_draw_scaled_bitmap(sprite_barra_preta, 0,0,500,500, 770, 15, 40, 65, 0);
 				morte_inimigo_boss = true;
 			}
+
+			//colocando projeteis do boss:
+			if (!morte_inimigo_boss) {
+				atira_boss(pjt_boss, salva, boss, p);
+				atira_boss2(pjt_boss2, salva2, p, boss);
+			}
+
+
     		
 			al_flip_display();														
 		}

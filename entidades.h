@@ -54,7 +54,7 @@ struct projetil {
     int velocidade;
 };
 
-struct projetil *cria_projetil(int largura, int altura, int posicao_x, int posicao_y, int velocidade);
+struct projetil *cria_projetil(int largura, int altura, int posicao_x, int posicao_y, int velocidade, int tipo);
 
 void destroi_projetil(struct projetil *pjt);
 
@@ -142,5 +142,9 @@ struct inimigo_boss *cria_inimigo_boss(int largura, int altura, int posicao_x, i
 void destroi_inimigo_boss(struct inimigo_boss *boss);
 
 void coloca_inimigo_boss(struct inimigo_boss *boss, int frame_atual);
+
+void coloca_projetil_boss(struct projetil *pjt, struct inimigo_boss *boss);
+
+void coloca_projetil_boss2(struct projetil *pjt, struct inimigo_boss *boss);
 
 #endif
