@@ -268,8 +268,8 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			//limpando a tela:
 			al_clear_to_color(al_map_rgb(0, 0, 0));	
 
-			//chamando a função theboss só para testar, depois vou chamar lá embaixo:
-			tela_the_boss(disp);	
+			//só testando:
+			tela_the_boss(disp);
 
 			//Movimentando mundo:
 			if (andando_direita)
@@ -310,7 +310,7 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			al_draw_scaled_bitmap(sprite_portal, 0,0,1024,1024, 12200+movendo_mundo, 340, 256, 256, 0);	
 
 			//Colocando personagem:
-			coloca_personagem(p);
+			coloca_personagem(p, 1);
 
 			//Colocando arma:
 			if (a->chave == 1) {
@@ -522,14 +522,20 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 				coracao1 = false;
 			if ((recebelobo == 1 && coracao2) || (recebelobo2 == 1 && coracao2) ||(recebe == 1 && coracao2) || (recebe2 == 1 && coracao2) || (recebe3 == 1 && coracao2) || (recebe4 == 1 && coracao2) || (recebe5 == 1 && coracao2) || (recebe6 == 1 && coracao2) || (recebe7 == 1 && coracao2) || (recebe8 == 1 && coracao2))
 				coracao2 = false;
-			if ((recebelobo ==0 && coracao3) || (recebelobo2 == 0 && coracao3) || (recebe == 0 && coracao3) || (recebe2 == 0 && coracao3) || (recebe3 == 0 && coracao3) || (recebe4 == 0 && coracao3) || (recebe5 == 0 && coracao3) || (recebe6 == 0 && coracao3) || (recebe7 == 0 && coracao3) || (recebe8 == 0 && coracao3)) 
+			if ((recebelobo == 0 && coracao3) || (recebelobo2 == 0 && coracao3) || (recebe == 0 && coracao3) || (recebe2 == 0 && coracao3) || (recebe3 == 0 && coracao3) || (recebe4 == 0 && coracao3) || (recebe5 == 0 && coracao3) || (recebe6 == 0 && coracao3) || (recebe7 == 0 && coracao3) || (recebe8 == 0 && coracao3)) 
 				coracao3 = false;
 			
 			// Atualiza a tela:
             al_flip_display();
 
 			//condição de parada do meu jogo:
-			if (-movendo_mundo > 11850 || (coracao1 == false && coracao2 == false && coracao3 == false)) {
+			if (-movendo_mundo > 11850) {
+				acabou_mundo = true;
+				//chamando a função the_boss se ele passar pelo cenário:
+				tela_the_boss(disp);
+				break;
+			}
+			if (coracao1 == false && coracao2 == false && coracao3 == false) {
 				acabou_mundo = true;
 				tela_game_over(disp);
 				break;

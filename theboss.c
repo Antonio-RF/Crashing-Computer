@@ -1,10 +1,12 @@
 #include "theboss.h"
 #include "entidades.h"
 #include "secundarias.h"
+#include "tela_game_over.h"
 #include "tela_pause.h"
 #include <allegro5/allegro5.h>														
 #include <allegro5/allegro_font.h>													
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h> 													
 #include <allegro5/bitmap.h>
 #include <allegro5/bitmap_io.h>
@@ -30,7 +32,7 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
     ALLEGRO_BITMAP* background_jogo3 = al_load_bitmap("Pictures/background3.png");
 
     //criando o meu personagem:
-	struct personagem *p = cria_personagem(160, 240, 400, 440);
+	struct personagem *p = cria_personagem(160, 240, 400, 650);
 
 	//criando projetil:
 	struct projetil_personagem *pjt = cria_projetil_personagem(64, 64, 500, p->posicao_y+160, 14);
@@ -42,9 +44,8 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	struct inimigo_boss *boss = cria_inimigo_boss(768, 528, 400, -150);
 
 	//criando projétil para boss:
-	struct projetil *pjt_boss = cria_projetil(128, 128, boss->posicao_x, boss->posicao_y, 14, 1);
-	struct projetil *pjt_boss2 = cria_projetil(128, 128, boss->posicao_x, boss->posicao_y, 14, 1);
-	struct projetil *pjt_boss3 = cria_projetil(128, 128, boss->posicao_x, boss->posicao_y, 14, 1);
+	struct projetil *pjt_boss = cria_projetil(192, 192, boss->posicao_x, boss->posicao_y, 14, 1);
+	struct projetil *pjt_boss2 = cria_projetil(192, 192, boss->posicao_x, boss->posicao_y, 14, 1);
 
 	//criando os corações que servirão de vida do personagem:
 	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");
@@ -100,8 +101,6 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	int recebe_boss;
 	int salva = pjt_boss->posicao_y;
 	int salva2 = pjt_boss2->posicao_y;
-	int salva3 = pjt_boss3->posicao_y;
-
 
 	//cirando variáveis para a vida do personagem:
 	int count_vidas = 3;
@@ -109,6 +108,14 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	bool coracao2 = true;
 	bool coracao3 = true;
 	bool coracao_boss = true;
+	int recebe1 = -1;
+	int recebe2 = -1;
+	int invencibilidade_frames = 0;
+	int invencibilidade_frames2 = 0;
+	int salva_posx = pjt_boss->posicao_x;
+	bool primeira_vez_morrendo = true;
+	bool primeira_vez_morrendo2 = true;
+
 
 	bool controle = true;
     while(controle){																		
@@ -131,8 +138,9 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 					a->chave = 1;
 					//conferindo se está virado a direita,
 					//se estiver, eu viro ele para a esquerda:
-					if (p->largura > 0)
+					if (p->largura > 0) {
 						p->largura *= -1;
+					}
 					andando_esquerda = true;
 					break;
 				case ALLEGRO_KEY_DOWN:
@@ -209,7 +217,8 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
             al_draw_scaled_bitmap(background_jogo3, 0, 0, 352, 224, 0, 0, 1080, 720, 0);
 
             //colocando meu personagem:
-            coloca_personagem(p);
+			al_draw_filled_rectangle(p->posicao_x, p->posicao_y, p->posicao_x+p->largura, p->posicao_y+5, al_map_rgb(255,0,0));
+            coloca_personagem(p, 2);
 
 			//colocando the boss:
 			if (!morte_inimigo_boss) {
@@ -313,8 +322,6 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 
 				coloca_projetil_personagem(pjt);
 
-				//impacto inimigo boss:
-				//espaço para colocar <>
 
 				if ((pjt->velocidade >= 100 || pjt->velocidade <= -72)) {
 					atirando = false;
@@ -324,6 +331,42 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 					atirando_nao_andar_tiro = true;
 				}
 			}
+
+			//Impacto inimigo boss:
+			if (invencibilidade_frames > 0)
+    			invencibilidade_frames--;
+			if (invencibilidade_frames2 > 0)
+    			invencibilidade_frames2--;
+
+			if (invencibilidade_frames <= 0) {
+				recebe1 = colisao_personagem_com_boss(&count_vidas, pjt_boss, p, &invencibilidade_frames);
+			}
+			if (invencibilidade_frames2 <= 0) {
+				recebe2 = colisao_personagem_com_boss(&count_vidas, pjt_boss2, p, &invencibilidade_frames2);
+			}
+
+			if ((recebe1 == 2 || recebe1 == 1 || recebe1 == 0) && (recebe2 == 2 || recebe2 == 1 || recebe2 == 0)) {
+				if (recebe1 == 2 && recebe2 == 1)
+					recebe2 = 2;
+				recebe1 = -1;
+				if (count_vidas == 0 && primeira_vez_morrendo) {
+					primeira_vez_morrendo = false;
+					count_vidas++;
+				}
+				if (count_vidas == 1 && primeira_vez_morrendo2) {
+					primeira_vez_morrendo2 = false;
+					count_vidas++;
+				}
+
+			}
+
+			if ((recebe1 == 2 && coracao1) || (recebe2 == 2 && coracao1))
+				coracao1 = false;
+			if ((recebe1 == 1 && coracao2) || (recebe2 == 1 && coracao2))
+				coracao2 = false;
+			if ((recebe1 == 0 && coracao3) || (recebe2 == 0 && coracao3))
+				coracao3 = false;
+
 
 			//Colocando corações:
 			if (coracao1)
@@ -421,10 +464,17 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 
 			//colocando projeteis do boss:
 			if (!morte_inimigo_boss) {
-				atira_boss(pjt_boss, salva, boss, p);
-				atira_boss2(pjt_boss2, salva2, p, boss);
+				atira_boss(pjt_boss, salva, boss, p, salva_posx);
+				//atira_boss2(pjt_boss2, salva2, p, boss);
 			}
 
+			if (coracao1 == false && coracao2 == false && coracao3 == false) {
+				tela_game_over(disp);
+				break;
+			}
+			//if (morte_inimigo_boss) {
+				//telawin
+			//}
 
     		
 			al_flip_display();														

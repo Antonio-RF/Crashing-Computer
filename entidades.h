@@ -25,7 +25,7 @@ struct personagem *cria_personagem(int largura, int altura, int posicao_x, int p
 
 void destroi_personagem(struct personagem *p);
 
-void coloca_personagem(struct personagem *p);
+void coloca_personagem(struct personagem *p, int tipo);
 
 //CHAVE:
 //0 - Personagem não está nos frames 1 ou 0;
@@ -143,7 +143,7 @@ void destroi_inimigo_boss(struct inimigo_boss *boss);
 
 void coloca_inimigo_boss(struct inimigo_boss *boss, int frame_atual);
 
-void coloca_projetil_boss(struct projetil *pjt, struct inimigo_boss *boss);
+void coloca_projetil_boss(struct projetil *pjt, struct inimigo_boss *boss, int salva_posx);
 
 void coloca_projetil_boss2(struct projetil *pjt, struct inimigo_boss *boss);
 

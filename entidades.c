@@ -63,8 +63,16 @@ void destroi_personagem(struct personagem *p) {
 }
 
 
-void coloca_personagem(struct personagem *p) {
-    al_draw_scaled_bitmap(p->sprites[p->frame_atual], 0, 0, 32, 48, p->posicao_x, p->posicao_y,p->largura, p->altura, 0);
+void coloca_personagem(struct personagem *p, int tipo) {
+    if (tipo == 1)
+        al_draw_scaled_bitmap(p->sprites[p->frame_atual], 0, 0, 32, 48, p->posicao_x, p->posicao_y,p->largura, p->altura, 0);
+    if (tipo == 2) {
+        if (p->largura > 0)
+            al_draw_scaled_bitmap(p->sprites[p->frame_atual], 0, 0, 32, 48, p->posicao_x, p->posicao_y-200,p->largura+50, p->altura, 0);
+        
+        if (p->largura < 0)
+            al_draw_scaled_bitmap(p->sprites[p->frame_atual], 0, 0, 32, 48, p->posicao_x, p->posicao_y-200,p->largura-50, p->altura, 0);
+    }
 }
 
 struct arma *cria_arma(int largura, int altura, int posicao_x, int posicao_y, int chave) {
@@ -346,11 +354,8 @@ void coloca_inimigo_boss(struct inimigo_boss *boss, int frame_atual) {
     al_draw_scaled_bitmap(boss->sprites[temp], 0, 0, 256, 176, boss->posicao_x, boss->posicao_y,boss->largura, boss->altura, 0);
 }
 
-void coloca_projetil_boss(struct projetil *pjt, struct inimigo_boss *boss) {
-    if (boss->largura > 0)
-        al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, boss->posicao_x+200, pjt->posicao_y+100, pjt->largura, pjt->altura, 0);
-    else
-        al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, boss->posicao_x-240, pjt->posicao_y+100, pjt->largura, pjt->altura, 0);
+void coloca_projetil_boss(struct projetil *pjt, struct inimigo_boss *boss, int salva_posx) {
+    al_draw_scaled_bitmap(pjt->sprite, 0,0,48,48, salva_posx, pjt->posicao_y+100, pjt->largura, pjt->altura, 0);
 }
 
 void coloca_projetil_boss2(struct projetil *pjt, struct inimigo_boss *boss) {

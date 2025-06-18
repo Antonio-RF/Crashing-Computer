@@ -225,21 +225,19 @@ int colisao_inimigo_boss(struct projetil_personagem *pjt, struct inimigo_boss *i
     return -1;
 }
 
-void atira_boss(struct projetil *pjt_boss, int salva, struct inimigo_boss *boss, struct personagem *p) {
+void atira_boss(struct projetil *pjt_boss, int salva, struct inimigo_boss *boss, struct personagem *p, int salva_posx) {
     pjt_boss->velocidade += 4;
     //pjt_boss->posicao_y += pjt_boss->velocidade;
     pjt_boss->posicao_y += 15;
 
     //variáveis para o projétil seguir o meu personagem:
     int sentido_p = p->posicao_x;
-    if (pjt_boss->posicao_x > sentido_p)
-        pjt_boss->posicao_x += 400;
-    else
-        pjt_boss->posicao_x -= 400;
-
-    coloca_projetil_boss(pjt_boss, boss);
+    
+    coloca_projetil_boss(pjt_boss, boss, salva_posx);
+    //al_draw_filled_rectangle(pjt_boss->posicao_x-20, pjt_boss->posicao_y, pjt_boss->posicao_x+pjt_boss->largura+20, pjt_boss->posicao_y+5, al_map_rgb(255,0,0));
     if (pjt_boss->velocidade >= 850) {
         pjt_boss->posicao_y = salva;
+        pjt_boss->posicao_x = salva_posx;
         pjt_boss->velocidade = 14;
     }
 }
@@ -255,40 +253,34 @@ void atira_boss2(struct projetil *pjt_boss, int salva, struct personagem *p, str
     }
 }
 
-int colisao_personagem_com_boss(int *count_vida, struct projetil *pjt, struct personagem *p) {
-    // Ajustando a posição do projétil considerando o movimento do mundo e a posição do pjt_bird (+40 tanto no x quanto no y):
+int colisao_personagem_com_boss(int *count_vida, struct projetil *pjt, struct personagem *p, int *invencibilidade_frames) {
     if (pjt == NULL || p == NULL)
         return -1;
     
-    // Se ele estiver no sentido esquerda para direita, muda largura para negativo:
-    int p_largura_abs;
-    if (p->largura < 0)
-        p_largura_abs = -p->largura;
-    else
-        p_largura_abs = p->largura;
-
-    // Definindo a posição X real do personagem:
-    float p_x_efetivo;
-    if (p->largura < 0)
-        p_x_efetivo = p->posicao_x + p->largura;
-    else
-        p_x_efetivo = p->posicao_x;
-
-    float proj_x = pjt->posicao_x + 40;
-    float proj_y = pjt->posicao_y + 40;
+    // Calcula a largura absoluta do personagem
+    int p_largura_abs = (p->largura < 0) ? -p->largura : p->largura;
     
-     bool colidiu = (proj_x < p_x_efetivo + p_largura_abs) && (proj_x + pjt->largura > p_x_efetivo) && (proj_y < p->posicao_y + p->altura) && (proj_y + pjt->altura > p->posicao_y);
+    // Posição X efetiva do personagem
+    float p_x_efetivo = (p->largura < 0) ? p->posicao_x + p->largura : p->posicao_x;
 
-    if (colidiu && pjt->velocidade < 100) {
+    // Define margens para reduzir a hitbox (ajuste esses valores conforme necessário)
+    const float margem_x = 10.0f;
+    const float margem_y = 10.0f;
+    
+    // Verifica colisão com margens reduzidas
+    bool colidiu = 
+        (pjt->posicao_x + margem_x < p_x_efetivo + p_largura_abs - margem_x) &&
+        (pjt->posicao_x + pjt->largura - margem_x > p_x_efetivo + margem_x) &&
+        (pjt->posicao_y + margem_y < p->posicao_y + p->altura - margem_y) &&
+        (pjt->posicao_y + pjt->altura - margem_y > p->posicao_y + margem_y);
+
+    if (colidiu && pjt->posicao_y > 650) {
         if (*count_vida > 0) {
             (*count_vida)--;
-            
-            // "Destrói" o projétil
-            pjt->velocidade = 100;
-            
-            // Retorna o novo valor de vida
+            *invencibilidade_frames = 30;
+            pjt->velocidade = 100; // "Destrói" o projétil
             return *count_vida;
         }
     }
-    return -1; // Retorna -1 quando não há colisão ou quando o personagem já está sem vida
+    return -1;
 }
