@@ -1,4 +1,4 @@
-//Compilação: gcc main.c cria_mundo.c entidades.c tela_game_over.c tela_pause.c theboss.c secundarias.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
+//Compilação: gcc main.c cria_mundo.c entidades.c tela_game_over.c tela_pause.c theboss.c secundarias.c tela_win.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
 
 
 #include <allegro5/allegro5.h>														//Biblioteca base do Allegro

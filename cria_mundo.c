@@ -268,9 +268,6 @@ void cria_mundo(ALLEGRO_DISPLAY* disp) {
 			//limpando a tela:
 			al_clear_to_color(al_map_rgb(0, 0, 0));	
 
-			//só testando:
-			tela_the_boss(disp);
-
 			//Movimentando mundo:
 			if (andando_direita)
 				movendo_mundo -= 14;

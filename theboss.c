@@ -3,6 +3,7 @@
 #include "secundarias.h"
 #include "tela_game_over.h"
 #include "tela_pause.h"
+#include "tela_win.h"
 #include <allegro5/allegro5.h>														
 #include <allegro5/allegro_font.h>													
 #include <allegro5/allegro_image.h>
@@ -66,7 +67,7 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 
 	//criando variáveis para ajudar no pulo:
     float velocidade_y = 0;
-    const float chao = 440;
+    const float chao = 650;
 	bool no_ar = false;
 
 	int valor_funcao_pause;
@@ -217,7 +218,7 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
             al_draw_scaled_bitmap(background_jogo3, 0, 0, 352, 224, 0, 0, 1080, 720, 0);
 
             //colocando meu personagem:
-			al_draw_filled_rectangle(p->posicao_x, p->posicao_y, p->posicao_x+p->largura, p->posicao_y+5, al_map_rgb(255,0,0));
+			//al_draw_filled_rectangle(p->posicao_x, p->posicao_y, p->posicao_x+p->largura, p->posicao_y+5, al_map_rgb(255,0,0));
             coloca_personagem(p, 2);
 
 			//colocando the boss:
@@ -472,9 +473,10 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 				tela_game_over(disp);
 				break;
 			}
-			//if (morte_inimigo_boss) {
-				//telawin
-			//}
+			if (morte_inimigo_boss) {
+				tela_win(disp);
+				break;
+			}
 
     		
 			al_flip_display();														
