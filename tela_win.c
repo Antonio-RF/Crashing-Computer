@@ -64,5 +64,7 @@ void tela_win(ALLEGRO_DISPLAY* disp) {
 	al_destroy_timer(timer);														
 	al_destroy_event_queue(queue);													
 	al_destroy_font(font);
+    al_destroy_font(font2);
+    al_destroy_bitmap(sprite_trofeu);
 
 }

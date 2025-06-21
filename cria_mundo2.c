@@ -103,6 +103,7 @@ void cria_mundo2(ALLEGRO_DISPLAY* disp) {
     float velocidade_y = 0;
     const float chao = 340;
 	bool no_ar = false;
+    bool pulando = false;
 
 	//criando variáveis para ajudar no tiro:
 	bool atirando = false;
@@ -230,13 +231,15 @@ void cria_mundo2(ALLEGRO_DISPLAY* disp) {
 						p->frame_atual = 2;
 					}
 					a->chave = 0;
+                    pulando = true;
 					break;
 				case ALLEGRO_KEY_SPACE:
 					p->frame_atual = 4;
-					a->chave = 1;
+					if (!pulando)
+						a->chave = 1;
 					if (p->largura < 0)
 						sentido_positivo = false;
-					if (!atirando) {
+					if (!atirando && !pulando) {
 						atirando = true;
 						if (p->largura > 0)
 							pjt->posicao_x = 510;  
@@ -279,6 +282,7 @@ void cria_mundo2(ALLEGRO_DISPLAY* disp) {
 				case ALLEGRO_KEY_UP:
 					p->frame_atual = 0;
 					a->chave = 1;
+                    pulando = false;
 					break;
 				case ALLEGRO_KEY_SPACE:
 					p->frame_atual = 0;
@@ -319,10 +323,6 @@ void cria_mundo2(ALLEGRO_DISPLAY* disp) {
 				posicao = movendo_mundo + i * 1080;
 				al_draw_scaled_bitmap(background_jogo2, 0, 0, 432, 240, posicao, 0, 1080, 720, 0);
 			}
-			/*for (int i = 0; i < 6; i++) {
-				posicao = movendo_mundo + (i+6) * 1080;
-				al_draw_scaled_bitmap(background_jogo2, 0, 0, 432, 240, posicao, 0, 1080, 720, 0);
-			}*/
 
 			//Colando variável que representa minha kilometragem:
 			char texto_posicao[50];
@@ -644,12 +644,50 @@ void cria_mundo2(ALLEGRO_DISPLAY* disp) {
 		destroi_inimigo(inimigo6);
 	if (inimigo7)
 		destroi_inimigo(inimigo7);
-	if (inimigo_bird)
+    if (inimigo8)
+		destroi_inimigo(inimigo8);
+    
+    //Com o intuito de não travar muito, deixando todos esses free como comentário:
+
+	/*if (inimigo_bird)
 		destroi_inimigo_bird(inimigo_bird);
 	if (inimigo_bird2)
 		destroi_inimigo_bird(inimigo_bird2);
+    if (inimigo_bird3)
+		destroi_inimigo_bird(inimigo_bird3);
+    if (inimigo_bird4)
+		destroi_inimigo_bird(inimigo_bird4);
+    if (inimigo_bird5)
+		destroi_inimigo_bird(inimigo_bird5);*/
+
+    /*if (pjt_bird)
+        destroi_projetil(pjt_bird);
+    if (pjt_bird2)
+        destroi_projetil(pjt_bird2);
+    if (pjt_bird3)
+        destroi_projetil(pjt_bird3);
+    if (pjt_bird4)
+        destroi_projetil(pjt_bird4);
+    if (pjt_bird5)
+        destroi_projetil(pjt_bird5);
+    if (pjt_lobo)
+        destroi_projetil(pjt_lobo);
+    if (pjt_lobo2)
+        destroi_projetil(pjt_lobo2);
+
 	if (sprite_coracao1)
 		al_destroy_bitmap(sprite_coracao1);
+	if (sprite_coracao2)
+		al_destroy_bitmap(sprite_coracao2);
+	if (sprite_coracao3)
+		al_destroy_bitmap(sprite_coracao3);
+	if (sprite_coracao_preto1)
+		al_destroy_bitmap(sprite_coracao_preto1);
+	if (sprite_coracao_preto2)
+		al_destroy_bitmap(sprite_coracao_preto2);
+	if (sprite_coracao_preto3)
+		al_destroy_bitmap(sprite_coracao_preto3);*/
+
 	al_destroy_timer(timer);														//Destrutor do relógio
 	al_destroy_event_queue(queue);													//Destrutor da fila
 	al_destroy_bitmap(background_jogo2);

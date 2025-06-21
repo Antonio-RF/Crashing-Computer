@@ -39,14 +39,14 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	struct projetil_personagem *pjt = cria_projetil_personagem(64, 64, 500, p->posicao_y+160, 14);
 
 	//criando arma:
-	struct arma *a = cria_arma(-64, 64, 570, p->posicao_y+160, 1);
+	//struct arma *a = cria_arma(-64, 64, 570, p->posicao_y+160, 1);
+	struct arma *a = cria_arma(-64, 64, 600, p->posicao_y-50, 1);
 
 	//criando boss:
 	struct inimigo_boss *boss = cria_inimigo_boss(768, 528, 400, -150);
 
 	//criando projétil para boss:
 	struct projetil *pjt_boss = cria_projetil(192, 192, boss->posicao_x, boss->posicao_y, 14, 1);
-	struct projetil *pjt_boss2 = cria_projetil(192, 192, boss->posicao_x, boss->posicao_y, 14, 1);
 
 	//criando os corações que servirão de vida do personagem:
 	ALLEGRO_BITMAP *sprite_coracao1 = al_load_bitmap("Sprites/coração.png");
@@ -101,8 +101,6 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 	int count_vidas_boss = 14;
 	int recebe_boss;
 	int salva = pjt_boss->posicao_y;
-	int salva2 = pjt_boss2->posicao_y;
-
 	//cirando variáveis para a vida do personagem:
 	int count_vidas = 3;
 	bool coracao1 = true;
@@ -342,9 +340,6 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 			if (invencibilidade_frames <= 0) {
 				recebe1 = colisao_personagem_com_boss(&count_vidas, pjt_boss, p, &invencibilidade_frames);
 			}
-			if (invencibilidade_frames2 <= 0) {
-				recebe2 = colisao_personagem_com_boss(&count_vidas, pjt_boss2, p, &invencibilidade_frames2);
-			}
 
 			if ((recebe1 == 2 || recebe1 == 1 || recebe1 == 0) && (recebe2 == 2 || recebe2 == 1 || recebe2 == 0)) {
 				if (recebe1 == 2 && recebe2 == 1)
@@ -466,7 +461,6 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 			//colocando projeteis do boss:
 			if (!morte_inimigo_boss) {
 				atira_boss(pjt_boss, salva, boss, p, salva_posx);
-				//atira_boss2(pjt_boss2, salva2, p, boss);
 			}
 
 			if (coracao1 == false && coracao2 == false && coracao3 == false) {
@@ -486,8 +480,38 @@ void tela_the_boss(ALLEGRO_DISPLAY* disp) {
 		
 	}
 
+	//Destuindo:
+	if (p)
+		destroi_personagem(p);
+	/*if (pjt)
+		destroi_projetil_personagem(pjt);
+	if (a)
+		destroi_arma(a);
+	if (boss)
+		destroi_inimigo_boss(boss);*/
+	if (pjt_boss)
+		destroi_projetil(pjt_boss);
+	
+	if (sprite_coracao1)
+		al_destroy_bitmap(sprite_coracao1);
+	if (sprite_coracao2)
+		al_destroy_bitmap(sprite_coracao2);
+	if (sprite_coracao3)
+		al_destroy_bitmap(sprite_coracao3);
+	if (sprite_coracao_preto1)
+		al_destroy_bitmap(sprite_coracao_preto1);
+	if (sprite_coracao_preto2)
+		al_destroy_bitmap(sprite_coracao_preto2);
+	if (sprite_coracao_preto3)
+		al_destroy_bitmap(sprite_coracao_preto3);
+	if (sprite_barra_preta)
+		al_destroy_bitmap(sprite_barra_preta);
+	if (sprite_barra_coracao_boss)
+		al_destroy_bitmap(sprite_barra_coracao_boss);
+
 	al_destroy_timer(timer);														
 	al_destroy_event_queue(queue);													
 	al_destroy_font(font);
+	al_destroy_font(font2);
 
 }

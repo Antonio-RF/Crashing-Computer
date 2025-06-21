@@ -1,6 +1,5 @@
 //Compilação: gcc main.c cria_mundo.c cria_mundo2.c entidades.c tela_game_over.c tela_pause.c theboss.c secundarias.c tela_win.c -o AS $(pkg-config --libs --cflags allegro-5 allegro_main-5 allegro_font-5 allegro_image-5 allegro_ttf-5 allegro_primitives-5)
 
-
 #include <allegro5/allegro5.h>														//Biblioteca base do Allegro
 #include <allegro5/allegro_font.h>													//Biblioteca de fontes do Allegro
 #include <allegro5/allegro_image.h>
@@ -143,6 +142,7 @@ int main(){
 	al_destroy_font(font);
 	al_destroy_font(font2);
 	al_destroy_font(font3);
+	al_destroy_bitmap(background);
 
 	return 0;
 }
